@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Playres — Panel de Administración</title>
+  <link href="https://fonts.googleapis.com/css2?family=Michroma&family=Unica+One&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="admin-wrapper">
+
+  <!-- SIDEBAR -->
+  <aside class="admin-sidebar">
+    <div class="sidebar-brand">
+      PLAY<span>R</span>ES
+      <span class="sidebar-brand-sub">ADMIN PANEL</span>
+    </div>
+
+    <div class="sidebar-label">Principal</div>
+    <ul class="sidebar-nav">
+      <li><a href="index.html"><span class="nav-icon">🏠</span> Ir al sitio</a></li>
+      <li><a href="catalogo.html"><span class="nav-icon">🛍️</span> Ver catálogo</a></li>
+    </ul>
+
+    <div class="sidebar-label">Catálogo</div>
+    <ul class="sidebar-nav">
+      <li><a href="admin.html" class="active"><span class="nav-icon">🎮</span> Productos</a></li>
+      <li><a href="#"><span class="nav-icon">📦</span> Reservas</a></li>
+      <li><a href="#"><span class="nav-icon">⭐</span> Reseñas</a></li>
+    </ul>
+
+    <div class="sidebar-label">Sistema</div>
+    <ul class="sidebar-nav">
+      <li><a href="#"><span class="nav-icon">👥</span> Usuarios</a></li>
+      <li><a href="#"><span class="nav-icon">⚙️</span> Configuración</a></li>
+    </ul>
+
+    <div class="sidebar-footer">
+      <div class="sidebar-user">
+        <div class="sidebar-avatar">A</div>
+        <div>
+          <div class="sidebar-user-name">Admin</div>
+          <div class="sidebar-user-role">Superadmin</div>
+        </div>
+        <a href="index.html" class="sidebar-exit-btn">Salir</a>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="admin-main">
+
+    <!-- Topbar -->
+    <div class="admin-topbar">
+      <div class="topbar-title">Panel de <span>Administración</span></div>
+      <div class="topbar-actions">
+        <span class="topbar-badge">🟢 Sistema activo</span>
+        <span class="admin-version-label">Playres v2.0</span>
+      </div>
+    </div>
+
+    <div class="admin-content">
+
+      <!-- Stats -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <span class="stat-card-icon">🎮</span>
+          <div class="stat-card-label">Total productos</div>
+          <div class="stat-card-value" id="totalCount">16</div>
+          <div class="stat-card-sub up">↑ +3 este mes</div>
+        </div>
+        <div class="stat-card">
+          <span class="stat-card-icon">✅</span>
+          <div class="stat-card-label">Disponibles</div>
+          <div class="stat-card-value" id="availCount">12</div>
+          <div class="stat-card-sub up">↑ En stock</div>
+        </div>
+        <div class="stat-card">
+          <span class="stat-card-icon">📦</span>
+          <div class="stat-card-label">Reservados</div>
+          <div class="stat-card-value" id="reservedCount">3</div>
+          <div class="stat-card-sub">↔ Activos</div>
+        </div>
+        <div class="stat-card">
+          <span class="stat-card-icon">❌</span>
+          <div class="stat-card-label">Agotados</div>
+          <div class="stat-card-value" id="outCount">1</div>
+          <div class="stat-card-sub down">↓ Sin stock</div>
+        </div>
+      </div>
+
+      <!-- Toolbar -->
+      <div class="table-toolbar">
+        <div class="table-toolbar-left">
+          <button class="btn-add-product" onclick="openAddModal()">＋ Agregar producto</button>
+          <div class="admin-search">
+            <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="color:var(--muted);flex-shrink:0">
+              <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+            </svg>
+            <input type="text" id="searchInput" placeholder="Buscar juego..." oninput="filterTable()">
+          </div>
+          <select class="admin-filter-select" id="platformFilter" onchange="filterTable()">
+            <option value="">🎮 Todas las plataformas</option>
+            <option value="PS5">PlayStation 5</option>
+            <option value="Xbox">Xbox Series X</option>
+            <option value="Switch">Nintendo Switch</option>
+            <option value="PC">PC</option>
+          </select>
+          <select class="admin-filter-select" id="statusFilter" onchange="filterTable()">
+            <option value="">📋 Todos los estados</option>
+            <option value="disponible">Disponible</option>
+            <option value="reservado">Reservado</option>
+            <option value="agotado">Agotado</option>
+          </select>
+        </div>
+        <div class="admin-result-count" id="resultCount">Mostrando 16 productos</div>
+      </div>
+
+      <!-- Tabla -->
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Producto</th>
+              <th>Plataforma</th>
+              <th>Género</th>
+              <th class="sortable">Precio/día ↕</th>
+              <th>Rating</th>
+              <th>Estado</th>
+              <th>Stock</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody"></tbody>
+        </table>
+      </div>
+
+      <!-- Paginación -->
+      <div class="admin-pagination">
+        <div class="pagination-info" id="pagInfo">Mostrando 1–8 de 16 productos</div>
+        <div class="pagination-btns">
+          <button class="pag-btn" id="prevPage" onclick="changePage(-1)" disabled>←</button>
+          <button class="pag-btn active" id="page1" onclick="goPage(1)">1</button>
+          <button class="pag-btn" id="page2" onclick="goPage(2)">2</button>
+          <button class="pag-btn" id="nextPage" onclick="changePage(1)">→</button>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<!-- MODAL AGREGAR / EDITAR -->
+<div class="modal fade modal-playres" id="productModal" tabindex="-1">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalTitle">➕ Agregar producto</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="editIndex" value="-1">
+        <div class="row g-3">
+          <div class="col-md-8">
+            <label class="form-label-playres">Título del juego</label>
+            <input type="text" class="form-control-playres" id="fTitle" placeholder="Ej: Elden Ring">
+          </div>
+          <div class="col-md-4">
+            <label class="form-label-playres">Plataforma</label>
+            <select class="form-control-playres" id="fPlatform">
+              <option value="PS5">PlayStation 5</option>
+              <option value="Xbox">Xbox Series X</option>
+              <option value="Switch">Nintendo Switch</option>
+              <option value="PC">PC</option>
+            </select>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label-playres">Género</label>
+            <select class="form-control-playres" id="fGenre">
+              <option>RPG</option>
+              <option>Acción</option>
+              <option>Aventura</option>
+              <option>Deportes</option>
+              <option>Carreras</option>
+              <option>Sci-Fi</option>
+              <option>Puzzle</option>
+            </select>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label-playres">Precio por día ($)</label>
+            <input type="number" class="form-control-playres" id="fPrice" placeholder="9900">
+          </div>
+          <div class="col-md-4">
+            <label class="form-label-playres">Stock disponible</label>
+            <input type="number" class="form-control-playres" id="fStock" placeholder="50">
+          </div>
+          <div class="col-md-4">
+            <label class="form-label-playres">Rating (1–5)</label>
+            <input type="number" class="form-control-playres" id="fRating" placeholder="4.9" step="0.1" min="1" max="5">
+          </div>
+          <div class="col-md-4">
+            <label class="form-label-playres">Estado</label>
+            <select class="form-control-playres" id="fStatus">
+              <option value="disponible">Disponible</option>
+              <option value="reservado">Reservado</option>
+              <option value="agotado">Agotado</option>
+            </select>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label-playres">Emoji / Ícono</label>
+            <select class="form-control-playres" id="fEmoji">
+              <option value="🌌">🌌 Galaxia</option>
+              <option value="🔴">🔴 Rojo</option>
+              <option value="🌿">🌿 Aventura</option>
+              <option value="🚀">🚀 Sci-Fi</option>
+              <option value="⚔️">⚔️ Espada</option>
+              <option value="🏎️">🏎️ Carrera</option>
+              <option value="🐉">🐉 Dragón</option>
+              <option value="⚽">⚽ Deportes</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancel-modal" data-bs-dismiss="modal">Cancelar</button>
+        <button class="btn-save-modal" onclick="saveProduct()">Guardar producto</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL ELIMINAR -->
+<div class="modal fade modal-playres" id="deleteModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered modal-sm">
+    <div class="modal-content">
+      <div class="modal-body admin-delete-body">
+        <div class="modal-delete-icon">🗑️</div>
+        <div class="modal-delete-title">¿Eliminar producto?</div>
+        <p class="modal-delete-sub">Vas a eliminar <span class="modal-delete-game-name" id="deleteGameName"></span>. Esta acción no se puede deshacer.</p>
+        <div class="admin-delete-actions">
+          <button class="btn-cancel-modal" data-bs-dismiss="modal">Cancelar</button>
+          <button class="btn-confirm-delete" onclick="confirmDelete()">Sí, eliminar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="playres-toast" id="toastEl">
+  <span class="toast-icon" id="toastIcon">✅</span>
+  <span class="toast-msg" id="toastMsg">Producto guardado</span>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="juegos.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
