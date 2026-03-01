@@ -327,6 +327,118 @@ if (document.getElementById('tableBody')) {
   renderTable();
 }
 
+
+// ==========================================
+// 1. REGISTRO DE USUARIO
+// ==========================================
+const registerForm = document.getElementById("registerForm");
+if (registerForm) {
+  registerForm.addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    // Creamos el objeto con los datos del formulario
+    const nuevoUsuario = {
+      nombre: document.getElementById("regNombre").value.trim(),
+      apellido: document.getElementById("regApellido").value.trim(),
+      email: document.getElementById("regEmail").value.trim(),
+      password: document.getElementById("regPassword").value.trim()
+    };
+
+    // Guardamos en el "disco duro" del navegador
+    localStorage.setItem("usuarioRegistrado", JSON.stringify(nuevoUsuario));
+
+    // Mostrar mensaje de éxito y limpiar
+    document.getElementById("successMessage").classList.remove("d-none");
+    registerForm.reset();
+    
+    
+    setTimeout(() => {
+      const modal = bootstrap.Modal.getInstance(document.getElementById('registerModal'));
+      modal.hide();
+      document.getElementById("successMessage").classList.add("d-none");
+    }, 2000);
+  });
+}
+
+// ==========================================
+// 2. LOGIN DE USUARIO
+// ==========================================
+  const loginForm = document.getElementById("loginForm");
+  if (loginForm) {
+  loginForm.addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    const emailInput = document.getElementById("loginEmail").value.trim();
+    const passInput = document.getElementById("loginPassword").value.trim();
+    const errorMsg = document.getElementById("loginError");
+
+    // Traemos al usuario que se registró antes
+    const usuarioGuardado = JSON.parse(localStorage.getItem("usuarioRegistrado"));
+
+    if (usuarioGuardado && emailInput === usuarioGuardado.email && passInput === usuarioGuardado.password) {
+      
+    
+      localStorage.setItem("usuarioActivo", JSON.stringify(usuarioGuardado));
+      
+      // Cerramos el modal
+      const modal = bootstrap.Modal.getInstance(document.getElementById('loginModal'));
+      modal.hide();
+      loginForm.reset();
+      errorMsg.classList.add("d-none");
+
+      // ¡IMPORTANTE! se llama a la funcion para cambiar la interfaz 
+      actualizarInterfaz();
+    } else {
+      // ERROR
+      errorMsg.textContent = "Datos incorrectos o usuario no registrado.";
+      errorMsg.classList.remove("d-none");
+    }
+  });
+}
+
+// ==========================================
+// 3. CAMBIO DE LOS BOTONES POR EL PERFIL
+// ==========================================
+function actualizarInterfaz() {
+  const sesion = JSON.parse(localStorage.getItem("usuarioActivo"));
+  
+  const botonesAuth = document.getElementById("navAuthButtons");
+  const perfilUsuario = document.getElementById("navUserProfile");
+  const nombreTxt = document.getElementById("userNameDisplay");
+  const avatarCirculo = document.getElementById("userAvatarInitials");
+
+  if (sesion) {
+    // una vez logueado se esconden los botones 
+    if (botonesAuth) botonesAuth.classList.add("d-none"); // se esconde el Login/Registro
+    if (perfilUsuario) perfilUsuario.classList.remove("d-none"); // Mostramos Perfil
+    
+    // Ponemos el nombre
+    if (nombreTxt) nombreTxt.textContent = sesion.nombre;
+
+    // Creamos las iniciales (Ej: Juan Perez -> JP)
+    if (avatarCirculo) {
+      const inicialN = sesion.nombre.charAt(0).toUpperCase();
+      const inicialA = sesion.apellido ? sesion.apellido.charAt(0).toUpperCase() : "";
+      avatarCirculo.textContent = inicialN + inicialA;
+    }
+  } else {
+    // Si no hay sesión (Cerró sesión o nunca entró)
+    if (botonesAuth) botonesAuth.classList.remove("d-none");
+    if (perfilUsuario) perfilUsuario.classList.add("d-none");
+  }
+}
+
+// ==========================================
+// 4. CERRAR SESIÓN
+// ==========================================
+window.cerrarSesion = function() {
+  localStorage.removeItem("usuarioActivo");
+  actualizarInterfaz();
+};
+
+// Al cargar la página, verificamos si ya había una sesión iniciada
+document.addEventListener("DOMContentLoaded", actualizarInterfaz);
+
 /* ACTIVAR SELECCIÓN DE CATEGORÍAS */
 
 document.querySelectorAll('.filter-tag').forEach(tag => {
@@ -340,13 +452,21 @@ document.querySelectorAll('.filter-tag').forEach(tag => {
 });
 
 
-/* AGREGAR NUEVA CATEGORÍA DINÁMICA */
+/* =========================================
+   AGREGAR NUEVA CATEGORÍA DESDE MODAL
+========================================= */
 
-const addCategoryBtn = document.getElementById("addCategoryBtn");
+document.addEventListener("DOMContentLoaded", () => {
 
-addCategoryBtn.addEventListener("click", () => {
+  const categoryForm = document.getElementById("addCategoryForm");
 
-    const nombreCategoria = prompt("Nombre de la nueva categoría:");
+  if (!categoryForm) return;
+
+  categoryForm.addEventListener("submit", function(e) {
+    e.preventDefault();
+
+    const nombreCategoria =
+      document.getElementById("categoryNameInput").value.trim();
 
     if (!nombreCategoria) return;
 
@@ -355,9 +475,27 @@ addCategoryBtn.addEventListener("click", () => {
     const nuevaCategoria = document.createElement("a");
     nuevaCategoria.href = "#";
     nuevaCategoria.classList.add("cat-card");
-    nuevaCategoria.textContent = nombreCategoria;
+
+    nuevaCategoria.innerHTML = `
+      <div style="font-size:40px; margin-bottom:10px;">🎮</div>
+      <h3 style="color:white; font-size:18px; margin:5px 0;">
+        ${nombreCategoria}
+      </h3>
+      <p style="color:#8b9bb4; font-size:14px;">
+        Nuevo
+    `;
 
     catGrid.appendChild(nuevaCategoria);
+
+    categoryForm.reset();
+
+    const modal = bootstrap.Modal.getInstance(
+      document.getElementById("addCategoryModal")
+    );
+
+    modal.hide();
+  });
+
 });
 
 
@@ -386,7 +524,9 @@ document.querySelectorAll('.game-card').forEach(card => {
 });
 
 
-/* MARCAR JUEGOS COMO FAVORITOS */
+/* =========================================
+   MARCAR / ELIMINAR JUEGOS FAVORITOS
+========================================= */
 
 let favoritos = [];
 
@@ -401,26 +541,36 @@ document.querySelectorAll('.game-card').forEach(card => {
   favBtn.style.right = "10px";
 
   const thumb = card.querySelector(".game-thumbnail");
+  thumb.style.position = "relative";
   thumb.appendChild(favBtn);
 
   favBtn.addEventListener("click", (e) => {
     e.stopPropagation();
 
-    card.classList.toggle("favorito");
+    const titulo =
+      card.querySelector(".game-title-catalog").textContent;
 
+    // SI YA ES FAVORITO → ELIMINAR
     if (card.classList.contains("favorito")) {
-      favoritos.push(card.cloneNode(true));
-    } else {
-      favoritos = favoritos.filter(f =>
-        f.querySelector(".game-title-catalog").textContent !==
-        card.querySelector(".game-title-catalog").textContent
+
+      card.classList.remove("favorito");
+
+      favoritos = favoritos.filter(game =>
+        game.querySelector(".game-title-catalog").textContent !== titulo
       );
+
+    } 
+    // SI NO ES FAVORITO → AGREGAR
+    else {
+
+      card.classList.add("favorito");
+
+      favoritos.push(card.cloneNode(true));
     }
 
     renderFavoritos();
   });
 });
-
 
 /* MOSTRAR LISTA DE FAVORITOS */
 

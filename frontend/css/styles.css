@@ -659,7 +659,7 @@ _____________________________________________________
   background: #080813;
 }
 
-.cat-grid {  
+.cat-grid {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
   columns: repeat(6, 1fr);
@@ -2351,6 +2351,66 @@ _____________________________________________________
 /* Responsive catálogo */
 @media (max-width: 767px) {
   .catalog-hero { padding-top: 100px; }
+}
+
+
+
+/* ════════════════════════════════════════════════════════════
+   19. REGISTRO - index.html
+   ════════════════════════════════════════════════════════════ */
+
+
+   /* Fondo del modal */
+.modal-content {
+  background: linear-gradient(145deg, #0b0f2a, #141a3a);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 16px;
+  color: #ffffff;
+  box-shadow: 0 0 40px rgba(88, 101, 242, 0.2);
+}
+
+/* Título */
+.modal-title {
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+
+/* Inputs personalizados */
+.modal-content .form-control {
+  background-color: #0f1535;
+  border: 1px solid #1f2a5a;
+  color: #ffffff;
+  border-radius: 10px;
+}
+
+.modal-content .form-control:focus {
+  border-color: #ff3c5f;
+  box-shadow: 0 0 10px rgba(255, 60, 95, 0.4);
+  background-color: #0f1535;
+  color: #ffffff;
+}
+
+/* Botón principal  */
+.modal-content .btn-primary {
+  background-color: #ff3c5f;
+  border: none;
+  border-radius: 12px;
+  font-weight: 600;
+  transition: 0.3s ease;
+}
+
+.modal-content .btn-primary:hover {
+  background-color: #ff1f4b;
+  box-shadow: 0 0 15px rgba(255, 60, 95, 0.6);
+}
+
+/* Feedback de error */
+.invalid-feedback {
+  font-size: 0.85rem;
+}
+.modal-backdrop.show {
+  background-color: #050816;
+  opacity: 0.9;
 
 }
 /* Botones slider testimonios */
