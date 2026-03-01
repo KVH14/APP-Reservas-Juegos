@@ -1,13 +1,540 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Playres — Reserva videojuegos a domicilio</title>
+  <link href="https://fonts.googleapis.com/css2?family=Michroma&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  
 </head>
 <body>
-    
-    <script src="app.js"></script>
+
+  <!-- NAVBAR -->
+  <nav class="navbar navbar-expand-lg navbar-playres fixed-top">
+    <div class="container-fluid container">
+      <a class="navbar-brand fw-bold" href="#inicio" style="color: aliceblue;">PLAY<span style="color: var(--red);">R</span> <span style="color: aliceblue;">ES</span></a>
+
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto mb-2 mb-lg-0 gap-lg-2 align-items-center">
+          <li class="nav-item"><a class="nav-link" href="#explorar">Explorar</a></li>
+          <li class="nav-item"><a class="nav-link" href="#categorias">Categorías</a></li>
+          <li class="nav-item"><a class="nav-link" href="#catalogo">Novedades</a></li>
+          <li class="nav-item"><a class="nav-link" href="#planes">Planes</a></li>
+          <li class="nav-item"><a class="nav-link" href="#comunidad">Comunidad</a></li>
+        </ul>
+
+        <div class="d-flex gap-2 ms-lg-3 mt-3 mt-lg-0">
+          <a href="#" class="btn btn-login btn-sm">Iniciar sesión</a>
+          <a href="#" class="btn btn-reservar btn-sm">Reservar ahora →</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero-bg" id="inicio">
+    <div class="container py-5">
+      <div class="row align-items-center gy-5">
+
+        <div class="col-lg-6">
+          <span class="badge-top">+13.200 Juegos disponibles hoy</span>
+          <h1 class="hero-title">
+            <span class="line-1">RESERVA</span>
+            <span class="line-2">TU PRÓXIMO</span>
+            <span class="line-3">JUEGO</span>
+          </h1>
+          <p class="hero-sub">
+            Alquila y reserva los mejores videojuegos sin colas, sin esperas.<br>
+            Entrega en tu puerta en menos de 2 horas.
+          </p>
+          <div class="d-flex flex-wrap gap-3 mb-2">
+            <a href="#explorar" class="btn-cta">Explorar catálogo</a>
+            <a href="#como-funciona" class="btn-ghost">
+              <span class="gi">▶</span> Ver demo
+            </a>
+          </div>
+          <div class="row g-0 stats-row">
+            <div class="col-4 stat-item">
+              <p class="stat-num">3.2<span class="accent-red">K</span></p>
+              <span class="stat-lbl">Títulos disponibles</span>
+            </div>
+            <div class="col-4 stat-item">
+              <p class="stat-num">48<span class="accent-cyan">H</span></p>
+              <span class="stat-lbl">Entrega en horas</span>
+            </div>
+            <div class="col-4 stat-item">
+              <p class="stat-num">98<span class="accent-green">%</span></p>
+              <span class="stat-lbl">Clientes satisfechos</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-6">
+          <div class="hero-right">
+            <div class="game-card-main">
+              <div class="gc-img">
+                <svg class="ctrl-svg" viewBox="0 0 120 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <rect x="10" y="20" width="100" height="45" rx="22" fill="url(#cg)" opacity="0.9"/>
+                  <circle cx="38" cy="45" r="9" fill="#2a2860" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+                  <circle cx="38" cy="45" r="5" fill="#1a1850"/>
+                  <circle cx="85" cy="38" r="5" fill="#fa3257" opacity="0.7"/>
+                  <circle cx="93" cy="45" r="5" fill="#4dffb4" opacity="0.6"/>
+                  <circle cx="85" cy="52" r="5" fill="#4dd9ff" opacity="0.6"/>
+                  <circle cx="77" cy="45" r="5" fill="#ffd166" opacity="0.6"/>
+                  <rect x="52" y="41" width="4" height="12" rx="2" fill="rgba(255,255,255,0.15)"/>
+                  <rect x="48" y="45" width="12" height="4" rx="2" fill="rgba(255,255,255,0.15)"/>
+                  <rect x="18" y="14" width="18" height="8" rx="4" fill="url(#cg)" opacity="0.7"/>
+                  <rect x="84" y="14" width="18" height="8" rx="4" fill="url(#cg)" opacity="0.7"/>
+                  <defs>
+                    <linearGradient id="cg" x1="10" y1="20" x2="110" y2="70" gradientUnits="userSpaceOnUse">
+                      <stop offset="0%" stop-color="#3a3880"/>
+                      <stop offset="100%" stop-color="#1a1640"/>
+                    </linearGradient>
+                  </defs>
+                </svg>
+              </div>
+
+              <div class="gc-body">
+                <div class="badge-res">Más reservado</div>
+                <h3 class="game-title">The Legend of Zelda: Tears of the Kingdom</h3>
+                <p class="game-price-row">Desde <strong>$8.900</strong>/día <span class="float-end stars">★★★★★ <span class="rating-value">4.9</span></span></p>
+
+                <div class="game-metadata">
+                  <div class="game-meta-item">
+                    <span class="game-meta-value">2H</span>
+                    <span class="game-meta-label">Entrega</span>
+                  </div>
+                  <div class="game-meta-item">
+                    <span class="game-meta-value">1.847</span>
+                    <span class="game-meta-label">Reservas</span>
+                  </div>
+                  <div class="game-meta-item">
+                    <span class="game-meta-value">+3.2K</span>
+                    <span class="game-meta-label">Stock</span>
+                  </div>
+                </div>
+
+                <a href="#" class="btn-res-card">Reservar ahora</a>
+              </div>
+            </div>
+            <div class="side-stats d-none d-lg-flex">
+              <div class="side-stat-card">
+                <div class="side-stat-icon icon-cyan">📦</div>
+                <div>
+                  <span class="side-stat-label">Entrega hoy</span>
+                  <span class="side-stat-value">EN 2H</span>
+                </div>
+              </div>
+              <div class="side-stat-card">
+                <div class="side-stat-icon icon-red">🎮</div>
+                <div>
+                  <span class="side-stat-label">Reservas activas</span>
+                  <span class="side-stat-value">1.847</span>
+                </div>
+              </div>
+              <div class="side-stat-card">
+                <div class="side-stat-icon icon-green">✦</div>
+                <div>
+                  <span class="side-stat-label">Disponibles</span>
+                  <span class="side-stat-value">3.200+</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- TICKER -->
+  <div class="ticker-wrap" aria-hidden="true">
+    <div class="ticker-track">
+      <span class="ticker-item">Reserva Online <span class="ticker-dot">+</span></span>
+      <span class="ticker-item">Entrega a Domicilio <span class="ticker-dot">+</span></span>
+      <span class="ticker-item">+3200 Títulos <span class="ticker-dot">+</span></span>
+      <span class="ticker-item">PS5 · Xbox · Switch · PC <span class="ticker-dot">+</span></span>
+      <span class="ticker-item">Desde $4.900/día <span class="ticker-dot">+</span></span>
+      <span class="ticker-item">Sin colas. Sin esperas <span class="ticker-dot">+</span></span>
+      <span class="ticker-item">Entrega en 2H <span class="ticker-dot">+</span></span>
+      <span class="ticker-item">Reserva Online <span class="ticker-dot">+</span></span>
+      <span class="ticker-item">Entrega a Domicilio <span class="ticker-dot">+</span></span>
+      <span class="ticker-item">+3200 Títulos <span class="ticker-dot">+</span></span>
+      <span class="ticker-item">PS5 · Xbox · Switch · PC <span class="ticker-dot">+</span></span>
+      <span class="ticker-item">Desde $4.900/día <span class="ticker-dot">+</span></span>
+      <span class="ticker-item">Sin colas. Sin esperas <span class="ticker-dot">+</span></span>
+      <span class="ticker-item">Entrega en 2H <span class="ticker-dot">+</span></span>
+    </div>
+  </div>
+
+  <!-- SEARCH -->
+  <section class="search-section" id="explorar">
+    <div class="container">
+      <div class="section-label">Encuentra tu juego</div>
+
+      <div class="search-box">
+        <div class="search-input-wrapper">
+          <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+          </svg>
+          <input type="text" placeholder="Buscar por título, género, plataforma...">
+        </div>
+        <div class="search-filter">📅 Fecha ▾</div>
+        <div class="search-filter">🎮 Plataforma ▾</div>
+        <button class="btn-search">Buscar</button>
+      </div>
+
+      <div class="filter-tags">
+        <span class="filter-tag active">🔥 Tendencia</span>
+        <span class="filter-tag">🚀 Lanzamientos</span>
+        <span class="filter-tag">⚔️ Acción</span>
+        <span class="filter-tag">🌍 Aventura</span>
+        <span class="filter-tag">⚽ Deportes</span>
+        <span class="filter-tag">🧩 Puzzle</span>
+        <span class="filter-tag">👾 Retro</span>
+        <span class="filter-tag">🏎️ Carreras</span>
+        <span class="filter-tag">🐉 RPG</span>
+        <span class="filter-tag">👥 Multijugador</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- CATEGORIES -->
+  <section class="cat-section" id="categorias">
+    <div class="container">
+      <div class="section-label1">-Géneros</div>
+      <h2 class="section-title1">EXPLORA POR<br>CATEGORÍA</h2>
+
+      <div class="cat-grid">
+        <a href="#" class="cat-card active"><span class="category-emoji">🔥</span><span class="category-name">Tendencia</span><span class="category-count">342 juegos</span></a>
+        <a href="#" class="cat-card"><span class="category-emoji">⚔️</span><span class="category-name">Acción</span><span class="category-count">520 juegos</span></a>
+        <a href="#" class="cat-card"><span class="category-emoji">🌍</span><span class="category-name">Aventura</span><span class="category-count">412 juegos</span></a>
+        <a href="#" class="cat-card"><span class="category-emoji">⚽</span><span class="category-name">Deportes</span><span class="category-count">198 juegos</span></a>
+        <a href="#" class="cat-card"><span class="category-emoji">🐉</span><span class="category-name">RPG</span><span class="category-count">387 juegos</span></a>
+        <a href="#" class="cat-card"><span class="category-emoji">🏎️</span><span class="category-name">Carreras</span><span class="category-count">144 juegos</span></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- CATÁLOGO -->
+  <section class="catalog-section" id="catalogo">
+    <div class="container">
+      <div class="sec-hdr">
+        <div>
+          <span class="section-label2">-Catálogo destacado</span>
+          <h2 class="section-title2">MÁS RESERVADOS</h2>
+        </div>
+        <a href="#" class="btn-ver">VER TODOS →</a>
+      </div>
+      <div class="games-grid">
+        <div class="game-card">
+          <div class="game-thumbnail game-thumb-purple">
+            <div class="game-tags"><span class="game-tag">RPG</span><span class="game-tag-top">↑ TOP 1</span></div>🌌
+          </div>
+          <div class="game-card-info">
+            <div class="game-platform">PlayStation 5</div>
+            <h3 class="game-title-catalog">Elden Ring: Shadow of the Erdtree</h3>
+            <div class="game-bottom">
+              <div class="game-price">$9.900<span>/día</span></div>
+              <div><span class="game-stars">★★★★★</span><span class="game-rating">4.9</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="game-card">
+          <div class="game-thumbnail game-thumb-red">
+            <div class="game-tags"><span class="game-tag">Acción</span><span class="game-tag-new">+ NUEVO</span></div>🔴
+          </div>
+          <div class="game-card-info">
+            <div class="game-platform">Xbox Series X</div>
+            <h3 class="game-title-catalog">Spider-Man 2</h3>
+            <div class="game-bottom">
+              <div class="game-price">$8.500<span>/día</span></div>
+              <div><span class="game-stars">★★★★★</span><span class="game-rating">4.8</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="game-card">
+          <div class="game-thumbnail game-thumb-green">
+            <div class="game-tags"><span class="game-tag">Aventura</span></div>🌿
+          </div>
+          <div class="game-card-info">
+            <div class="game-platform">Nintendo Switch</div>
+            <h3 class="game-title-catalog">The Legend of Zelda: Tears of the Kingdom</h3>
+            <div class="game-bottom">
+              <div class="game-price">$8.900<span>/día</span></div>
+              <div><span class="game-stars">★★★★★</span><span class="game-rating">4.9</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="game-card">
+          <div class="game-thumbnail game-thumb-blue">
+            <div class="game-tags"><span class="game-tag">Sci-Fi</span><span class="game-tag-new">+ NUEVO</span></div>🚀
+          </div>
+          <div class="game-card-info">
+            <div class="game-platform">PC / PS5</div>
+            <h3 class="game-title-catalog">Starfield: Shattered Space</h3>
+            <div class="game-bottom">
+              <div class="game-price">$7.900<span>/día</span></div>
+              <div><span class="game-stars">★★★★</span><span class="game-rating">4.5</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CÓMO FUNCIONA -->
+  <section class="how-section" id="como-funciona">
+    <div class="container">
+      <div class="row align-items-center gy-5">
+        <div class="col-lg-6">
+          <span class="section-label">¿Cómo funciona?</span>
+          <h2 class="section-title mb-4">ASÍ DE<br>FÁCIL</h2>
+          <div class="how-steps">
+            <div class="how-step">
+              <div class="step-number">01</div>
+              <div class="step-content">
+                <div class="step-tag">Busca</div>
+                <h3 class="step-title">Elige tu juego favorito</h3>
+                <p class="step-description">Explora más de 3.200 títulos disponibles para todas las plataformas y elige el que quieras.</p>
+              </div>
+            </div>
+            <div class="how-step">
+              <div class="step-number">02</div>
+              <div class="step-content">
+                <div class="step-tag">Reserva</div>
+                <h3 class="step-title">Selecciona tus fechas</h3>
+                <p class="step-description">Escoge los días que necesitas el juego. Sin compromisos, puedes extender o devolver cuando quieras.</p>
+              </div>
+            </div>
+            <div class="how-step">
+              <div class="step-number">03</div>
+              <div class="step-content">
+                <div class="step-tag">Recibe</div>
+                <h3 class="step-title">Lo recibimos en tu puerta</h3>
+                <p class="step-description">Entrega en menos de 2 horas en tu ciudad. Recogida incluida sin costo adicional.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-5 offset-lg-1">
+          <div class="browser-mock">
+            <div class="browser-bar">
+              <div class="browser-dots">
+                <div class="browser-dot browser-dot-red"></div>
+                <div class="browser-dot browser-dot-yellow"></div>
+                <div class="browser-dot browser-dot-green"></div>
+              </div>
+              <div class="browser-url">playres.co — Reserva</div>
+            </div>
+            <div class="browser-body">
+              <div class="mock-game-thumbnail">🌌</div>
+              <div class="mock-game-name">Elden Ring: Shadow...</div>
+              <div class="mock-game-price-platform"><strong>$9.900/día</strong><span class="platform-badge"> · PS5</span></div>
+              <div class="mock-date-label">Selecciona días</div>
+              <div class="mock-dates">
+                <div class="mock-date-item"><span class="date-name">VIE</span><span class="date-day">28</span></div>
+                <div class="mock-date-item selected"><span class="date-name">SÁB</span><span class="date-day">29</span></div>
+                <div class="mock-date-item selected"><span class="date-name">DOM</span><span class="date-day">30</span></div>
+                <div class="mock-date-item"><span class="date-name">LUN</span><span class="date-day">31</span></div>
+              </div>
+              <div class="mock-total">
+                <span class="mock-total-label">Total (2 días)</span>
+                <span class="mock-total-value">$19.800</span>
+              </div>
+              <button class="btn-cnf">Confirmar reserva →</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PLANES -->
+  <section class="pricing-section" id="planes">
+    <div class="container">
+      <span class="section-label d-inline-block mb-2">Planes</span>
+      <h2 class="section-title">ELIGE TU<br>PLAN</h2>
+      <p class="pricing-sub">Sin contratos, sin sorpresas. Cancela cuando quieras.</p>
+      <div class="pgrid">
+        <div class="pcard">
+          <div class="pricing-tier">Casual</div>
+          <div class="pricing-amount"><span class="currency-symbol">$</span><span class="amount">0</span><span class="period">/mes</span></div>
+          <p class="pricing-description">Para los que juegan de vez en cuando.</p>
+          <ul class="pricing-features">
+            <li><span class="check-icon">✓</span> 3 reservas por mes</li>
+            <li><span class="check-icon">✓</span> Catálogo básico (800+ títulos)</li>
+            <li><span class="check-icon">✓</span> Entrega en 24h</li>
+            <li class="off"><span class="x-icon">✕</span> Acceso a lanzamientos</li>
+            <li class="off"><span class="x-icon">✕</span> Entrega express</li>
+          </ul>
+          <a href="#" class="pricing-button btn-pricing-ghost">Empezar gratis</a>
+        </div>
+        <div class="pcard feat">
+          <div class="badge-pop">⚡ Más popular</div>
+          <div class="pricing-tier">Pro Gamer</div>
+          <div class="pricing-amount"><span class="currency-symbol">$</span><span class="amount">29.900</span><span class="period">/mes</span></div>
+          <p class="pricing-description">Para los verdaderos gamers que no quieren perderse nada.</p>
+          <ul class="pricing-features">
+            <li><span class="check-icon">✓</span> Reservas ilimitadas</li>
+            <li><span class="check-icon">✓</span> Catálogo completo (3.200+ títulos)</li>
+            <li><span class="check-icon">✓</span> Entrega express en 2h</li>
+            <li><span class="check-icon">✓</span> Acceso prioritario a lanzamientos</li>
+            <li><span class="check-icon">✓</span> Descuento del 15% en extras</li>
+          </ul>
+          <a href="#" class="pricing-button btn-pricing-primary">Obtener Pro →</a>
+        </div>
+        <div class="pcard">
+          <div class="pricing-tier">Familia</div>
+          <div class="pricing-amount"><span class="currency-symbol">$</span><span class="amount">49.900</span><span class="period">/mes</span></div>
+          <p class="pricing-description">Hasta 5 usuarios bajo una misma suscripción.</p>
+          <ul class="pricing-features">
+            <li><span class="check-icon">✓</span> Todo lo de Pro × 5 usuarios</li>
+            <li><span class="check-icon">✓</span> Panel familiar compartido</li>
+            <li><span class="check-icon">✓</span> Reservas simultáneas</li>
+            <li><span class="check-icon">✓</span> Control parental incluido</li>
+            <li><span class="check-icon">✓</span> Soporte prioritario 24/7</li>
+          </ul>
+          <a href="#" class="pricing-button btn-pricing-ghost">Elegir Familia</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIOS -->
+  <section class="test-section" id="comunidad">
+    <div class="container">
+      <div class="test-hdr">
+        <div>
+          <span class="section-label">Testimonios</span>
+          <h2 class="section-title">LO QUE DICEN<br>LOS GAMERS</h2>
+        </div>
+        <div class="text-end">
+          <div class="testimonial-score">4.9<span>/5</span></div>
+          <div class="testimonial-stars">★★★★★</div>
+          <div class="testimonial-count-text">Basado en 5.847 reseñas</div>
+        </div>
+      </div>
+
+      <div class="testimonials-slider" id="testimonialsSlider">
+        <div class="testimonials-track">
+          <div class="testimonial-card">
+            <div class="testimonial-stars-row">★★★★★</div>
+            <p class="testimonial-quote">"La mejor plataforma de reservas que he usado. Llegó el juego en 1h30min, impecable. Definitivamente ya no compro, solo reservo en Playres."</p>
+            <div class="testimonial-author">
+              <div class="testimonial-avatar avatar-gradient-red">C</div>
+              <div><div class="testimonial-name">Carlos M.</div><div class="testimonial-meta">Pro Gamer · Bogotá · 🎮 43 reservas</div></div>
+            </div>
+          </div>
+          <div class="testimonial-card">
+            <div class="testimonial-stars-row">★★★★★</div>
+            <p class="testimonial-quote">"Con el plan familiar es increíble. Mis dos hijos y yo podemos reservar al mismo tiempo. El control parental funciona perfecto. ¡100% recomendado!"</p>
+            <div class="testimonial-author">
+              <div class="testimonial-avatar avatar-gradient-purple">M</div>
+              <div><div class="testimonial-name">Marcela R.</div><div class="testimonial-meta">Plan Familia · Medellín · 🎮 31 reservas</div></div>
+            </div>
+          </div>
+          <div class="testimonial-card">
+            <div class="testimonial-stars-row">★★★★★</div>
+            <p class="testimonial-quote">"Antes gastaba un dineral comprando juegos que solo terminaba una vez. Ahora reservo, juego, devuelvo. Ahorré más de $400.000 en el último mes."</p>
+            <div class="testimonial-author">
+              <div class="testimonial-avatar avatar-gradient-green">A</div>
+              <div><div class="testimonial-name">Andrés V.</div><div class="testimonial-meta">Pro Gamer · Cali · 🎮 72 reservas</div></div>
+            </div>
+          </div>
+          <div class="testimonial-card">
+            <div class="testimonial-stars-row">★★★★★</div>
+            <p class="testimonial-quote">"Excelente servicio, muy rápido. Los juegos llegan en perfecto estado y el empaque es profesional. Muy satisfecho con la experiencia."</p>
+            <div class="testimonial-author">
+              <div class="testimonial-avatar avatar-gradient-red">J</div>
+              <div><div class="testimonial-name">Juan P.</div><div class="testimonial-meta">Casual Gamer · Barranquilla · 🎮 18 reservas</div></div>
+            </div>
+          </div>
+          <div class="testimonial-card">
+            <div class="testimonial-stars-row">★★★★★</div>
+            <p class="testimonial-quote">"La mejor decisión que tomé. Juego tantos títulos como quiero sin gastar una fortuna. El equipo de soporte es muy atento."</p>
+            <div class="testimonial-author">
+              <div class="testimonial-avatar avatar-gradient-purple">L</div>
+              <div><div class="testimonial-name">Laura G.</div><div class="testimonial-meta">Pro Gamer · Cartagena · 🎮 56 reservas</div></div>
+            </div>
+          </div>
+          <div class="testimonial-card">
+            <div class="testimonial-stars-row">★★★★★</div>
+            <p class="testimonial-quote">"Definitivamente recomendado. Los precios son justos y la calidad del servicio no tiene comparación con otras plataformas similares."</p>
+            <div class="testimonial-author">
+              <div class="testimonial-avatar avatar-gradient-green">R</div>
+              <div><div class="testimonial-name">Roberto S.</div><div class="testimonial-meta">Pro Gamer · Santa Marta · 🎮 89 reservas</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container">
+      <div class="row gy-4">
+        <div class="col-lg-3 col-md-6">
+          <div class="footer-logo">PLAY<span>RES</span></div>
+          <p class="footer-description">La plataforma colombiana para reservar videojuegos. Más de 3.200 títulos para PS5, Xbox, Switch y PC con entrega a domicilio.</p>
+          <div class="footer-platforms">
+            <span class="footer-platform-badge">PS5</span>
+            <span class="footer-platform-badge">Xbox</span>
+            <span class="footer-platform-badge">Switch</span>
+            <span class="footer-platform-badge">PC</span>
+          </div>
+        </div>
+        <div class="col-lg-2 col-md-6 offset-lg-1">
+          <div class="footer-category-title">Explorar</div>
+          <ul class="footer-links">
+            <li><a href="#">Catálogo completo</a></li>
+            <li><a href="#">Novedades</a></li>
+            <li><a href="#">Más reservados</a></li>
+            <li><a href="#">Próximamente</a></li>
+            <li><a href="#">Clásicos</a></li>
+          </ul>
+        </div>
+        <div class="col-lg-2 col-md-6">
+          <div class="footer-category-title">Cuenta</div>
+          <ul class="footer-links">
+            <li><a href="#">Mis reservas</a></li>
+            <li><a href="#">Mi lista</a></li>
+            <li><a href="#">Historial</a></li>
+            <li><a href="#">Configuración</a></li>
+            <li><a href="#">Plan actual</a></li>
+          </ul>
+        </div>
+        <div class="col-lg-2 col-md-6">
+          <div class="footer-category-title">Empresa</div>
+          <ul class="footer-links">
+            <li><a href="#">Acerca de</a></li>
+            <li><a href="#">Blog</a></li>
+            <li><a href="#">Prensa</a></li>
+            <li><a href="#">Trabaja con nosotros</a></li>
+            <li><a href="#">Contacto</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span class="footer-copyright">© 2025 Playres S.A.S. — Todos los derechos reservados. Hecho en Colombia 🇨🇴</span>
+        <div class="footer-bottom-links">
+          <a href="#">Privacidad</a>
+          <a href="#">Términos</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="app.js"></script>
+
 </body>
 </html>
