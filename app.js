@@ -372,7 +372,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Validar email con regex
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
     if (!emailRegex.test(email.value.trim())) {
       email.classList.add("is-invalid");
       valid = false;
@@ -388,77 +387,133 @@ document.addEventListener("DOMContentLoaded", function () {
       password.classList.add("is-valid");
     }
 
-    // Si todo es válido
-    const successMessage = document.getElementById("successMessage");
+    // 🔴 SOLUCIÓN: Solo ejecutamos el éxito si 'valid' se mantuvo en true
+    if (valid) {
+      
+      // 1. Guardar usuario en localStorage (Movido aquí adentro)
+      const userData = {
+        nombre: nombre.value.trim(),
+        apellido: apellido.value.trim(),
+        email: email.value.trim(),
+        password: password.value.trim()
+      };
+      localStorage.setItem("usuarioRegistrado", JSON.stringify(userData));
 
-    successMessage.classList.remove("d-none");
+      // 2. Mostrar mensaje de éxito
+      const successMessage = document.getElementById("successMessage");
+      if (successMessage) successMessage.classList.remove("d-none");
 
-    setTimeout(() => {
-     successMessage.classList.add("d-none");
-     form.reset();
+      // 3. Esperar 1.5 segundos, luego limpiar y cerrar
+      setTimeout(() => {
+        if (successMessage) successMessage.classList.add("d-none");
+        form.reset();
 
-     [nombre, apellido, email, password].forEach(input => {
-     input.classList.remove("is-valid");
-   });
+        [nombre, apellido, email, password].forEach(input => {
+          input.classList.remove("is-valid");
+        });
 
-     const modal = bootstrap.Modal.getInstance(document.getElementById("registerModal"));
-     modal.hide();
+        // Asegurarnos de obtener la instancia correcta del modal de Bootstrap
+        const modalEl = document.getElementById("registerModal");
+        if (modalEl) {
+          const modal = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
+          modal.hide();
+        }
 
-     }, 1500); 
-
-      // Quitar estilos después de reset
-      [nombre, apellido, email, password].forEach(input => {
-        input.classList.remove("is-valid");
-      });
-
-      const modal = bootstrap.Modal.getInstance(document.getElementById("registerModal"));
-      modal.hide();
+      }, 2000); 
     }
-
-    );
+  });
 
   // ===============================
-// VALIDACIÓN EN TIEMPO REAL
+  // VALIDACIÓN EN TIEMPO REAL
+  // ===============================
+
+  [nombre, apellido, email, password].forEach(input => {
+    input.addEventListener("input", function () {
+
+      if (input.value.trim() === "") {
+        input.classList.remove("is-valid");
+        input.classList.remove("is-invalid");
+        return;
+      }
+
+      if (input === email) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (emailRegex.test(input.value.trim())) {
+          input.classList.add("is-valid");
+          input.classList.remove("is-invalid");
+        } else {
+          input.classList.add("is-invalid");
+          input.classList.remove("is-valid");
+        }
+      } 
+      else if (input === password) {
+        if (input.value.trim().length >= 6) {
+          input.classList.add("is-valid");
+          input.classList.remove("is-invalid");
+        } else {
+          input.classList.add("is-invalid");
+          input.classList.remove("is-valid");
+        }
+      } 
+      else {
+        if (input.value.trim().length >= 2) {
+          input.classList.add("is-valid");
+          input.classList.remove("is-invalid");
+        } else {
+          input.classList.add("is-invalid");
+          input.classList.remove("is-valid");
+        }
+      }
+
+    });
+  });
+
+
+
+
+// ===============================
+// LOGIN DE USUARIO
 // ===============================
 
-[nombre, apellido, email, password].forEach(input => {
-  input.addEventListener("input", function () {
+const loginForm = document.getElementById("loginForm");
 
-    if (input.value.trim() === "") {
-      input.classList.remove("is-valid");
-      input.classList.remove("is-invalid");
+if (loginForm) {
+
+  loginForm.addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    const email = document.getElementById("loginEmail").value.trim();
+    const password = document.getElementById("loginPassword").value.trim();
+    const errorMessage = document.getElementById("loginError");
+
+    const storedUser = JSON.parse(localStorage.getItem("usuarioRegistrado"));
+
+    if (!storedUser) {
+      errorMessage.textContent = "No existe ningún usuario registrado.";
+      errorMessage.classList.remove("d-none");
       return;
     }
 
-    if (input === email) {
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (emailRegex.test(input.value.trim())) {
-        input.classList.add("is-valid");
-        input.classList.remove("is-invalid");
-      } else {
-        input.classList.add("is-invalid");
-        input.classList.remove("is-valid");
-      }
-    } 
-    else if (input === password) {
-      if (input.value.trim().length >= 6) {
-        input.classList.add("is-valid");
-        input.classList.remove("is-invalid");
-      } else {
-        input.classList.add("is-invalid");
-        input.classList.remove("is-valid");
-      }
-    } 
-    else {
-      if (input.value.trim().length >= 2) {
-        input.classList.add("is-valid");
-        input.classList.remove("is-invalid");
-      } else {
-        input.classList.add("is-invalid");
-        input.classList.remove("is-valid");
-      }
+    if (email === storedUser.email && password === storedUser.password) {
+
+      localStorage.setItem("usuarioActivo", JSON.stringify(storedUser));
+
+      errorMessage.classList.add("d-none");
+
+      const modal = bootstrap.Modal.getInstance(document.getElementById("loginModal"));
+      modal.hide();
+
+      actualizarNavbar();
+
+    } else {
+      errorMessage.textContent = "Correo o contraseña incorrectos.";
+      errorMessage.classList.remove("d-none");
     }
 
   });
-});
+
+}
+
+
+
 });

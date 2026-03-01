@@ -30,7 +30,7 @@
         </ul>
 
         <div class="d-flex gap-2 ms-lg-3 mt-3 mt-lg-0">
-          <a href="#" class="btn btn-login btn-sm">Iniciar sesión</a>
+          <a href="#" class="btn btn-login btn-sm" data-bs-toggle="modal"data-bs-target="#loginModal">Iniciar sesión</a>
           <a href="#" class="btn btn-login btn-sm" data-bs-toggle="modal" data-bs-target="#registerModal">Registrarse</a>
           <a href="#" class="btn btn-reservar btn-sm">Reservar ahora →</a>
         </div>
@@ -594,6 +594,47 @@
     </div>
   </div>
 </div>
+
+<!-- MODAL LOGIN -->
+<div class="modal fade" id="loginModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title">Iniciar sesión</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      <div class="modal-body">
+
+        <div id="loginError" class="alert alert-danger d-none">
+          Correo o contraseña incorrectos.
+        </div>
+
+        <form id="loginForm">
+
+          <div class="mb-3">
+            <label class="form-label">Correo electrónico</label>
+            <input type="email" class="form-control" id="loginEmail">
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Contraseña</label>
+            <input type="password" class="form-control" id="loginPassword">
+          </div>
+
+          <button type="submit" class="btn btn-primary w-100">
+            Entrar
+          </button>
+
+        </form>
+
+      </div>
+
+    </div>
+  </div>
+</div>
+
 
 <script src="app.js"></script>
 
