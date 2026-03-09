@@ -7,7 +7,7 @@ const juegos = [];
 
 async function cargarJuegosAPI() {
 
-  const API_KEY = "801260fce8c34873904ab1f0d8669823";
+  const API_KEY = "400cc619f51f4b18b3c201a5670d7fdc";
 
   const url = `https://api.rawg.io/api/games?key=${API_KEY}&page_size=40`;
 
