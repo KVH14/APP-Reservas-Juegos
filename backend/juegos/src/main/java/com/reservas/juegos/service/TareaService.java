@@ -1,21 +1,20 @@
 package com.reservas.juegos.service;
 
-import java.util.List;
 import com.reservas.juegos.entities.Tarea;
-import com.reservas.juegos.strategy.EstrategiaOrden;
+import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
+
+@Service
 public class TareaService {
+    private final List<Tarea> tareas = new ArrayList<>();
 
-    private EstrategiaOrden estrategia;
-
-    public void setEstrategia(EstrategiaOrden estrategia) {
-        this.estrategia = estrategia;
+    public List<Tarea> listar() {
+        return tareas;
     }
 
-    public List<Tarea> ordenarTareas(List<Tarea> tareas) {
-        if (estrategia != null) {
-            estrategia.ordenar(tareas);
-        }
-        return tareas;
+    public void agregar(Tarea tarea) {
+        tareas.add(tarea);
     }
 }

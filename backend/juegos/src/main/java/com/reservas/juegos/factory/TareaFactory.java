@@ -1,21 +1,12 @@
 package com.reservas.juegos.factory;
 
-import com.reservas.juegos.entities.Tarea;
-import com.reservas.juegos.entities.TareaNormal;
-import com.reservas.juegos.entities.TareaUrgente;
+import com.reservas.juegos.entities.*;
 
 public class TareaFactory {
-
-    public static Tarea crearTarea(String tipo, String nombre) {
-
-        if (tipo.equalsIgnoreCase("urgente")) {
+    public static Tarea crear(String tipo, String nombre) {
+        if ("urgente".equalsIgnoreCase(tipo)) {
             return new TareaUrgente(nombre);
-
-        } else if (tipo.equalsIgnoreCase("normal")) {
-            return new TareaNormal(nombre);
-
-        } else {
-            throw new IllegalArgumentException("Tipo de tarea no válido");
         }
+        return new TareaNormal(nombre);
     }
 }
