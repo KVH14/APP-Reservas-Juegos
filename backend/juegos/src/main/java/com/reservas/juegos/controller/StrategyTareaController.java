@@ -1,6 +1,8 @@
 package com.reservas.juegos.controller;
 
+import com.reservas.juegos.dto.TareaDTO;
 import com.reservas.juegos.entities.Tarea;
+import com.reservas.juegos.factory.TareaFactory;
 import com.reservas.juegos.service.TareaService;
 import com.reservas.juegos.strategy.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,14 +11,19 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/strategy/tareas") // 👈 ruta diferente
+@RequestMapping("/strategy/tareas")
 public class StrategyTareaController {
 
     @Autowired
     private TareaService service;
 
     @PostMapping
-    public void crearTarea(@RequestBody Tarea tarea) {
+    public void crearTarea(@RequestBody TareaDTO tareaDTO) {
+        // Convierte el DTO a entidad usando Factory
+        Tarea tarea = TareaFactory.crear(
+            tareaDTO.getPrioridad() >= 10 ? "urgente" : "normal",
+            tareaDTO.getNombre()
+        );
         service.guardar(tarea);
     }
 
