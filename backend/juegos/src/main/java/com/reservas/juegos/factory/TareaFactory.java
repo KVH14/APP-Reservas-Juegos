@@ -9,4 +9,12 @@ public class TareaFactory {
         }
         return new TareaNormal(nombre);
     }
+
+    // Nuevo método que acepta prioridad personalizada
+    public static Tarea crear(String tipo, String nombre, int prioridad) {
+        if ("urgente".equalsIgnoreCase(tipo)) {
+            return new TareaUrgente(nombre, prioridad);
+        }
+        return new TareaNormal(nombre, prioridad);
+    }
 }

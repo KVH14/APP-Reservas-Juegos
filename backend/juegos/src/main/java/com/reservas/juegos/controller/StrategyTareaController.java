@@ -19,10 +19,11 @@ public class StrategyTareaController {
 
     @PostMapping
     public void crearTarea(@RequestBody TareaDTO tareaDTO) {
-        // Convierte el DTO a entidad usando Factory
+        // Convierte el DTO a entidad usando Factory con la prioridad real
         Tarea tarea = TareaFactory.crear(
             tareaDTO.getPrioridad() >= 10 ? "urgente" : "normal",
-            tareaDTO.getNombre()
+            tareaDTO.getNombre(),
+            tareaDTO.getPrioridad()
         );
         service.guardar(tarea);
     }
