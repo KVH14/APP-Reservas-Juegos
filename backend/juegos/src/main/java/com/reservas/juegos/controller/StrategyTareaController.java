@@ -25,18 +25,29 @@ public class StrategyTareaController {
             tareaDTO.getNombre(),
             tareaDTO.getPrioridad()
         );
+        tarea.setPrioridad(tareaDTO.getPrioridad());
         service.guardar(tarea);
     }
 
     @GetMapping
     public List<Tarea> obtenerTareas(@RequestParam String tipoOrden) {
-
         if (tipoOrden.equalsIgnoreCase("prioridad")) {
             service.setEstrategia(new OrdenPorPrioridad());
         } else {
             service.setEstrategia(new OrdenPorNombre());
         }
-
         return service.obtenerTareasOrdenadas();
+    }
+
+    @GetMapping("/exportar")
+    public String exportar() throws Exception {
+        service.exportarACSV("tareas.csv");
+        return "Exportado correctamente";
+    }
+
+    @GetMapping("/cargar")
+    public String cargar() throws Exception {
+        service.cargarDesdeCSV("tareas.csv");
+        return "Cargado correctamente";
     }
 }

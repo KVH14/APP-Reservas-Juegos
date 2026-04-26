@@ -51,24 +51,24 @@ public class TareaService {
         this.estrategia = estrategia;
     }
 
-    // Guarda una tarea en el repository
+    // Guarda una tarea en el repository y en la lista en memoria
     public void guardar(Tarea tarea) {
         if (repository != null) {
             repository.guardar(tarea);
         }
+        tareas.add(tarea);
     }
 
     // Obtiene las tareas y aplica la estrategia seleccionada
     public List<Tarea> obtenerTareasOrdenadas() {
         List<Tarea> resultado;
-        
+
         if (repository != null) {
             resultado = repository.obtenerTodas();
         } else {
             resultado = new ArrayList<>(tareas);
         }
 
-        // Si hay estrategia, se aplica
         if (estrategia != null) {
             estrategia.ordenar(resultado);
         }

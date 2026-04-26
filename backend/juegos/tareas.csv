@@ -1,7 +1,4 @@
 tipo,nombre,prioridad
-urgente,reservar videojuego,10
-normal,entregar juego,1
-normal,regresar videojuego spiderman,1
-urgente,reservar videojuego,10
-normal,entregar juego,1
-normal,regresar videojuego spiderman,1
+urgente,quitar juego,10
+urgente,mandar juego a reparar,10
+normal,abrir tienda,1
