@@ -5,11 +5,14 @@ import com.reservas.juegos.entities.Producto;
 import com.reservas.juegos.service.CaracteristicaService;
 import com.reservas.juegos.service.ProductoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Endpoints:
@@ -33,9 +36,24 @@ public class ProductoController {
     @Autowired
     private CaracteristicaService caracteristicaService;
 
+    // Listar todos los productos (con paginación opcional)
     @GetMapping
-    public ResponseEntity<List<Producto>> listarTodos() {
-        return ResponseEntity.ok(productoService.listarTodos());
+    public ResponseEntity<?> listarTodos(
+            @RequestParam(required = false) Integer page,
+            @RequestParam(required = false) Integer size) {
+
+        if (page == null || size == null) {
+            return ResponseEntity.ok(productoService.listarTodos());
+        }
+
+        Page<Producto> productosPage = productoService.listarPaginado(page, size);
+        Map<String, Object> response = new HashMap<>();
+        response.put("contenido", productosPage.getContent());
+        response.put("paginaActual", productosPage.getNumber());
+        response.put("totalElementos", productosPage.getTotalElements());
+        response.put("totalPaginas", productosPage.getTotalPages());
+
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/{id}")
