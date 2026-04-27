@@ -1,1 +1,4 @@
 tipo,nombre,prioridad
+urgente,quitar juego,10
+urgente,mandar juego a reparar,10
+normal,abrir tienda,1
