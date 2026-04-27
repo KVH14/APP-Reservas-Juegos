@@ -1,31 +1,56 @@
 package com.reservas.juegos.service;
 
-import com.reservas.juegos.dto.UsuarioDTO;
 import com.reservas.juegos.entities.Usuario;
+import com.reservas.juegos.repository.UsuarioRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UsuarioService {
-    private final List<Usuario> usuarios = new ArrayList<>();
-    private static Long contador = 1L;
 
-    public Usuario crearUsuario(UsuarioDTO dto) {
-        Usuario usuario = new Usuario(contador++, dto.getNombre(), dto.getCorreo());
-        usuarios.add(usuario);
-        return usuario;
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+
+    // Admin hardcodeado
+    private static final String ADMIN_EMAIL = "admin@playres.com";
+    private static final String ADMIN_PASSWORD = "Admin123!";
+
+    public Usuario registrar(String email, String password, String nombre) throws Exception {
+        if (usuarioRepository.findByEmail(email).isPresent()) {
+            throw new Exception("Email ya existe");
+        }
+        Usuario usuario = new Usuario(email, password, nombre, "USUARIO");
+        return usuarioRepository.save(usuario);
     }
 
-    public List<Usuario> listarUsuarios() {
-        return usuarios;
+    public Usuario login(String email, String password) throws Exception {
+        Optional<Usuario> usuario = usuarioRepository.findByEmail(email);
+        if (usuario.isEmpty()) {
+            throw new Exception("Usuario no encontrado");
+        }
+        if (!usuario.get().getPassword().equals(password)) {
+            throw new Exception("Contraseña incorrecta");
+        }
+        return usuario.get();
     }
 
+    public boolean esAdmin(String email, String password) {
+        return ADMIN_EMAIL.equals(email) && ADMIN_PASSWORD.equals(password);
+    }
+
+    public Optional<Usuario> buscarPorEmail(String email) {
+        return usuarioRepository.findByEmail(email);
+    }
+
+    // Listar todos los usuarios
+    public java.util.List<Usuario> listarUsuarios() {
+        return usuarioRepository.findAll();
+    }
+
+    // Obtener usuario por id (retorna null si no existe - usado por controlador)
     public Usuario obtenerUsuario(Long id) {
-        return usuarios.stream()
-                .filter(u -> u.getId().equals(id))
-                .findFirst()
-                .orElse(null);
+        return usuarioRepository.findById(id).orElse(null);
     }
 }

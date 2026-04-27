@@ -2,31 +2,18 @@ package com.reservas.juegos.factory;
 
 import com.reservas.juegos.entities.Producto;
 import com.reservas.juegos.entities.Reserva;
-import com.reservas.juegos.entities.ReservaConFecha;
-import com.reservas.juegos.entities.ReservaSinFecha;
-import com.reservas.juegos.entities.Usuario;
+
+import java.time.LocalDate;
 
 public class ReservaFactory {
-    private static Long contador = 1L;
 
-    // Crear reserva con fecha
-    public static Reserva crearReservaConFecha(String detalles, Usuario usuario, Producto producto, String fecha) {
-        return new ReservaConFecha(
-                contador++,
-                detalles,
-                usuario,
-                producto,
-                fecha
-        );
+    // Crear reserva con fecha (usa tipos del entity Reserva)
+    public static Reserva crearReservaConFecha(String nombreCliente, String emailCliente, Producto producto, LocalDate fechaReserva, LocalDate fechaDevolucion) {
+        return new Reserva(nombreCliente, emailCliente, producto, fechaReserva, fechaDevolucion);
     }
 
-    // Crear reserva sin fecha
-    public static Reserva crearReservaSinFecha(String detalles, Usuario usuario, Producto producto) {
-        return new ReservaSinFecha(
-                contador++,
-                detalles,
-                usuario,
-                producto
-        );
+    // Crear reserva sin fecha: pone fechaReserva = hoy y fechaDevolucion = null
+    public static Reserva crearReservaSinFecha(String nombreCliente, String emailCliente, Producto producto) {
+        return new Reserva(nombreCliente, emailCliente, producto, LocalDate.now(), null);
     }
 }

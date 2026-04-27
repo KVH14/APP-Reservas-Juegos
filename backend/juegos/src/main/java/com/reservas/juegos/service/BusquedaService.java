@@ -15,8 +15,8 @@ public class BusquedaService {
     }
 
     public List<Producto> buscarPorNombre(String nombre) {
-        return productoService.listarProductos().stream()
-                .filter(p -> p.getNombre().toLowerCase().contains(nombre.toLowerCase()))
+        return productoService.listarTodos().stream()
+                .filter(p -> p.getTitulo() != null && p.getTitulo().toLowerCase().contains(nombre.toLowerCase()))
                 .collect(Collectors.toList());
     }
 }

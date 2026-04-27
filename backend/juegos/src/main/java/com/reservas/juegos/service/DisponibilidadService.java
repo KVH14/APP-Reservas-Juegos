@@ -16,18 +16,18 @@ public class DisponibilidadService {
 
     public boolean verificarDisponibilidad(Long id) {
         return productos.stream()
-                .filter(p -> p.getId().equals(id))
-                .map(Producto::isDisponible)
+                .filter(p -> p.getId() != null && p.getId().equals(id))
+                .map(p -> p.getEstado() != null && p.getEstado().equalsIgnoreCase("disponible"))
                 .findFirst()
                 .orElse(false);
     }
 
     public boolean cambiarDisponibilidad(Long id, boolean disponible) {
         return productos.stream()
-                .filter(p -> p.getId().equals(id))
+                .filter(p -> p.getId() != null && p.getId().equals(id))
                 .findFirst()
                 .map(p -> {
-                    p.setDisponible(disponible);
+                    p.setEstado(disponible ? "disponible" : "no_disponible");
                     return true;
                 })
                 .orElse(false);

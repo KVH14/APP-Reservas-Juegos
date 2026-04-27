@@ -1,13 +1,9 @@
 package com.reservas.juegos.entities;
 
+import java.time.LocalDate;
+
 public class ReservaConFecha extends Reserva {
-    private String fecha;
-
-    public ReservaConFecha(Long id, String detalles, Usuario usuario, Producto producto, String fecha) {
-        super(id, detalles, usuario, producto);
-        this.fecha = fecha;
+    public ReservaConFecha(String nombreCliente, String emailCliente, Producto producto, LocalDate fechaReserva, LocalDate fechaDevolucion) {
+        super(nombreCliente, emailCliente, producto, fechaReserva, fechaDevolucion);
     }
-
-    public String getFecha() { return fecha; }
-    public void setFecha(String fecha) { this.fecha = fecha; }
 }

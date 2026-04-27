@@ -24,7 +24,7 @@ public class FavoritoService {
 
     public Favorito crearFavorito(FavoritoDTO dto) {
         Usuario usuario = usuarioService.obtenerUsuario(dto.getUsuarioId());
-        Producto producto = productoService.obtenerProducto(dto.getProductoId());
+        Producto producto = productoService.buscarPorId(dto.getProductoId()).orElse(null);
 
         if (usuario == null || producto == null) {
             throw new IllegalArgumentException("Usuario o producto no encontrado");
