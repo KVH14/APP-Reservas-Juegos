@@ -78,4 +78,35 @@ public class ProductoService {
             return productoRepository.save(p);
         });
     }
+    // Ver políticas del producto
+    public Optional<String> obtenerPoliticas(Long id) {
+        return productoRepository.findById(id)
+                .map(Producto::getPoliticas);
+    }
+
+    // Compartir producto: devuelve datos listos para compartir en redes
+    public Optional<Map<String, String>> obtenerDatosCompartir(Long id) {
+        return productoRepository.findById(id).map(p -> Map.of(
+                "titulo",    p.getTitulo(),
+                "precio",    String.valueOf(p.getPrecio()),
+                "plataforma", p.getPlataforma() != null ? p.getPlataforma() : "",
+                "imagenUrl", p.getImagenUrl() != null ? p.getImagenUrl() : "",
+                "link",      "https://juegos.app/producto/" + p.getId()
+        ));
+    }
+
+    // Puntua el producto (acumula votos y recalcula promedio)
+    public Optional<Producto> puntuar(Long id, double puntuacion) {
+        if (puntuacion < 1 || puntuacion > 5) return Optional.empty();
+
+        return productoRepository.findById(id).map(p -> {
+            p.setTotalVotos(p.getTotalVotos() + 1);
+            p.setSumaRatings(p.getSumaRatings() + puntuacion);
+            double promedio = p.getSumaRatings() / p.getTotalVotos();
+            // Redondear a 1 decimal
+            p.setRating(Math.round(promedio * 10.0) / 10.0);
+            return productoRepository.save(p);
+        });
+    }
+
 }

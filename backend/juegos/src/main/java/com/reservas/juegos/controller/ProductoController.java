@@ -64,6 +64,15 @@ public class ProductoController {
                 : ResponseEntity.notFound().build();
     }
 
+    // #11 eliminar producto
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> eliminar(@PathVariable Long id) {
+        return productoService.eliminar(id)
+                ? ResponseEntity.noContent().build()
+                : ResponseEntity.notFound().build();
+    }
+
+
     // #12 Categorizar producto
     @PostMapping("/{id}/categorias/{categoriaId}")
     public ResponseEntity<Producto> asignarCategoria(
@@ -90,4 +99,42 @@ public class ProductoController {
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
+
+    //#26 ver bloque de politicas del producto
+    @GetMapping("/{id}/politicas")
+    public ResponseEntity<?> verPoliticas(@PathVariable Long id) {
+        return productoService.obtenerPoliticas(id)
+                .map(pol -> ResponseEntity.ok((Object) Map.of("politicas", pol != null ? pol : "")))
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+
+    //#27 comparit producto en redes sociales
+
+    @GetMapping("/{id}/compartir")
+    public ResponseEntity<Map<String, String>> compartir(@PathVariable Long id) {
+        return productoService.obtenerDatosCompartir(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+    //#28 puntuar producto
+
+    @PostMapping("/{id}/puntuar")
+    public ResponseEntity<?> puntuar(
+            @PathVariable Long id,
+            @RequestBody Map<String, Double> body) {
+
+        Double puntuacion = body.get("puntuacion");
+        if (puntuacion == null) {
+            return ResponseEntity.badRequest().body("El campo 'puntuacion' es obligatorio.");
+        }
+        if (puntuacion < 1 || puntuacion > 5) {
+            return ResponseEntity.badRequest().body("La puntuación debe estar entre 1 y 5.");
+        }
+
+        return productoService.puntuar(id, puntuacion)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
 }

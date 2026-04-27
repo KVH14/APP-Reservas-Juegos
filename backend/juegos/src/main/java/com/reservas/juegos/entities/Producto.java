@@ -26,6 +26,19 @@ public class Producto {
     private double rating;
     private String emoji;
 
+    // 26.Ver bloque de políticas del producto
+    @Column(columnDefinition = "TEXT")
+    private String politicas;
+
+    // 27.Compartir: URL de imagen para usar en redes sociales
+    private String imagenUrl;
+
+    // Acumuladores para calcular rating promedio (#28)
+    private int totalVotos;
+    private double sumaRatings;
+
+
+
     @JsonIgnore
     @OneToMany(mappedBy = "producto", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Caracteristica> caracteristicas = new ArrayList<>();
