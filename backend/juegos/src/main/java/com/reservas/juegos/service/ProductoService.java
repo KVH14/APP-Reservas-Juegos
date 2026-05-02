@@ -5,10 +5,11 @@ import com.reservas.juegos.entities.Categoria;
 import com.reservas.juegos.entities.Producto;
 import com.reservas.juegos.repository.CategoriaRepository;
 import com.reservas.juegos.repository.ProductoRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class ProductoService {
@@ -21,13 +22,21 @@ public class ProductoService {
         this.categoriaRepository = categoriaRepository;
     }
 
-    // CRUD básico
+    // 🔹 CRUD básico
     public List<Producto> listarTodos() {
         return productoRepository.findAll();
     }
 
+    public Page<Producto> listarPaginado(int page, int size) {
+        return productoRepository.findAll(PageRequest.of(page, size));
+    }
+
     public Optional<Producto> buscarPorId(Long id) {
         return productoRepository.findById(id);
+    }
+
+    public Producto crear(Producto producto) {
+        return productoRepository.save(producto);
     }
 
     public Producto crearProducto(ProductoDTO dto) {
@@ -67,7 +76,7 @@ public class ProductoService {
         return false;
     }
 
-    // Métodos de búsqueda para BusquedaController
+    // 🔹 Métodos de búsqueda (para BusquedaController)
     public List<Producto> buscarPorGenero(String genero) {
         return productoRepository.findByGenero(genero);
     }
@@ -86,5 +95,55 @@ public class ProductoService {
 
     public List<Producto> buscarPorRating(double min) {
         return productoRepository.findByRatingGreaterThanEqual(min);
+    }
+
+    // 🔹 Asignar / quitar categorías
+    public Optional<Producto> asignarCategoria(Long productoId, Long categoriaId) {
+        Optional<Producto> productoOpt = productoRepository.findById(productoId);
+        Optional<Categoria> categoriaOpt = categoriaRepository.findById(categoriaId);
+
+        if (productoOpt.isPresent() && categoriaOpt.isPresent()) {
+            Producto producto = productoOpt.get();
+            producto.getCategorias().add(categoriaOpt.get());
+            return Optional.of(productoRepository.save(producto));
+        }
+        return Optional.empty();
+    }
+
+    public Optional<Producto> quitarCategoria(Long productoId, Long categoriaId) {
+        Optional<Producto> productoOpt = productoRepository.findById(productoId);
+        Optional<Categoria> categoriaOpt = categoriaRepository.findById(categoriaId);
+
+        if (productoOpt.isPresent() && categoriaOpt.isPresent()) {
+            Producto producto = productoOpt.get();
+            producto.getCategorias().remove(categoriaOpt.get());
+            return Optional.of(productoRepository.save(producto));
+        }
+        return Optional.empty();
+    }
+
+    // 🔹 Políticas
+    public Optional<String> obtenerPoliticas(Long id) {
+        return productoRepository.findById(id).map(Producto::getPoliticas);
+    }
+
+    // 🔹 Compartir (ejemplo: devolver título e imagen)
+    public Optional<Map<String, String>> obtenerDatosCompartir(Long id) {
+        return productoRepository.findById(id).map(p -> {
+            Map<String, String> datos = new HashMap<>();
+            datos.put("titulo", p.getTitulo());
+            datos.put("imagenUrl", p.getImagenUrl());
+            return datos;
+        });
+    }
+
+    // 🔹 Puntuar producto
+    public Optional<Producto> puntuar(Long id, double puntuacion) {
+        return productoRepository.findById(id).map(p -> {
+            p.setTotalVotos(p.getTotalVotos() + 1);
+            p.setSumaRatings(p.getSumaRatings() + puntuacion);
+            p.setRating(p.getSumaRatings() / p.getTotalVotos());
+            return productoRepository.save(p);
+        });
     }
 }
