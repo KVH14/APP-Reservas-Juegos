@@ -1,12 +1,15 @@
 package com.reservas.juegos.service;
+
 import com.reservas.juegos.dto.ReservaDTO;
 import com.reservas.juegos.entities.Producto;
 import com.reservas.juegos.entities.Reserva;
 import com.reservas.juegos.repository.ProductoRepository;
 import com.reservas.juegos.repository.ReservaRepository;
+import com.reservas.juegos.factory.ReservaFactory;
+import com.reservas.juegos.strategy.ReservaNormalStrategy;
+import com.reservas.juegos.strategy.ReservaPremiumStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.reservas.juegos.factory.ReservaFactory;
 
 import java.util.List;
 import java.util.Optional;
@@ -15,10 +18,10 @@ import java.util.Optional;
 public class ReservaService {
 
     @Autowired
-    private com.reservas.juegos.strategy.ReservaNormalStrategy normal;
+    private ReservaNormalStrategy normal;
 
     @Autowired
-    private com.reservas.juegos.strategy.ReservaPremiumStrategy premium;
+    private ReservaPremiumStrategy premium;
 
     @Autowired
     private ReservaRepository reservaRepository;
@@ -26,31 +29,37 @@ public class ReservaService {
     @Autowired
     private ProductoRepository productoRepository;
 
+    /** Listar todas las reservas */
     public List<Reserva> listarTodas() {
         return reservaRepository.findAll();
     }
 
+    /** Listar reservas sin fecha de devolución */
     public List<Reserva> listarSinFecha() {
         return reservaRepository.findByFechaDevolucionIsNull();
     }
 
+    /** Listar reservas con fecha de devolución */
     public List<Reserva> listarConFecha() {
         return reservaRepository.findByFechaDevolucionIsNotNull();
     }
 
+    /** Buscar reserva por ID */
     public Optional<Reserva> buscarPorId(Long id) {
         return reservaRepository.findById(id);
     }
 
+    /** Buscar reservas por email del cliente */
     public List<Reserva> buscarPorEmail(String email) {
         return reservaRepository.findByEmailCliente(email);
     }
 
+    /** Buscar reservas por producto */
     public List<Reserva> buscarPorProducto(Long productoId) {
         return reservaRepository.findByProductoId(productoId);
     }
 
-    // #32 – Realizar reserva
+    /** Crear nueva reserva (#32 – Realizar reserva) */
     public Optional<Reserva> crear(ReservaDTO dto) {
         if (dto.getNombreCliente() == null || dto.getNombreCliente().isBlank()) return Optional.empty();
         if (dto.getEmailCliente() == null || dto.getEmailCliente().isBlank()) return Optional.empty();
@@ -61,7 +70,7 @@ public class ReservaService {
 
         Producto producto = productoOpt.get();
 
-        // Verificar que el producto tenga stock disponible
+        // Verificar stock disponible
         if (producto.getStock() <= 0) return Optional.empty();
 
         // Descontar stock
@@ -70,6 +79,7 @@ public class ReservaService {
 
         Reserva reserva;
 
+        // Usar estrategia según tipo
         if ("PREMIUM".equalsIgnoreCase(dto.getTipo())) {
             reserva = premium.crear(dto, producto);
         } else {
@@ -79,7 +89,7 @@ public class ReservaService {
         return Optional.of(reservaRepository.save(reserva));
     }
 
-    // Cancelar reserva (devuelve stock)
+    /** Cancelar reserva (devuelve stock) */
     public Optional<Reserva> cancelar(Long id) {
         return reservaRepository.findById(id).map(r -> {
             if ("CANCELADA".equals(r.getEstado())) return r;
@@ -95,7 +105,7 @@ public class ReservaService {
         });
     }
 
-    // Confirmar reserva
+    /** Confirmar reserva */
     public Optional<Reserva> confirmar(Long id) {
         return reservaRepository.findById(id).map(r -> {
             r.setEstado("CONFIRMADA");
@@ -103,6 +113,7 @@ public class ReservaService {
         });
     }
 
+    /** Eliminar reserva */
     public boolean eliminar(Long id) {
         if (!reservaRepository.existsById(id)) return false;
         reservaRepository.deleteById(id);

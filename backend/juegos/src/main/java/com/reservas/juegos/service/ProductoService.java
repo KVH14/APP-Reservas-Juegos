@@ -1,53 +1,48 @@
 package com.reservas.juegos.service;
 
+import com.reservas.juegos.dto.ProductoDTO;
 import com.reservas.juegos.entities.Categoria;
 import com.reservas.juegos.entities.Producto;
 import com.reservas.juegos.repository.CategoriaRepository;
 import com.reservas.juegos.repository.ProductoRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Map;       // 👈 necesario para Map.of()
 import java.util.Optional;
 
 @Service
 public class ProductoService {
 
-    @Autowired
-    private ProductoRepository productoRepository;
+    private final ProductoRepository productoRepository;
+    private final CategoriaRepository categoriaRepository;
 
-    @Autowired
-    private CategoriaRepository categoriaRepository;
+    public ProductoService(ProductoRepository productoRepository, CategoriaRepository categoriaRepository) {
+        this.productoRepository = productoRepository;
+        this.categoriaRepository = categoriaRepository;
+    }
 
-    // Listar todos los productos
+    // CRUD básico
     public List<Producto> listarTodos() {
         return productoRepository.findAll();
     }
 
-    // Listar productos con paginación
-    public Page<Producto> listarPaginado(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        return productoRepository.findAll(pageable);
-    }
-
-    // Buscar producto por ID
     public Optional<Producto> buscarPorId(Long id) {
         return productoRepository.findById(id);
     }
 
-    // Crear producto con validación básica
-    public Producto crear(Producto producto) {
-        if (producto.getTitulo() == null || producto.getTitulo().isBlank()) {
-            throw new IllegalArgumentException("El título del producto es obligatorio");
-        }
-        return productoRepository.save(producto);
+    public Producto crearProducto(ProductoDTO dto) {
+        Categoria categoria = categoriaRepository.findById(dto.getCategoriaId())
+                .orElseThrow(() -> new IllegalArgumentException("La categoría no existe"));
+
+        Producto nuevo = new Producto(dto.getTitulo(), dto.getPlataforma(), dto.getGenero(),
+                dto.getPrecio(), dto.getStock(), dto.getEstado(), dto.getRating(), dto.getEmoji());
+        nuevo.setPoliticas(dto.getPoliticas());
+        nuevo.setImagenUrl(dto.getImagenUrl());
+        nuevo.getCategorias().add(categoria);
+
+        return productoRepository.save(nuevo);
     }
 
-    // Actualizar producto
     public Optional<Producto> actualizar(Long id, Producto datos) {
         return productoRepository.findById(id).map(p -> {
             p.setTitulo(datos.getTitulo());
@@ -58,73 +53,38 @@ public class ProductoService {
             p.setEstado(datos.getEstado());
             p.setRating(datos.getRating());
             p.setEmoji(datos.getEmoji());
+            p.setPoliticas(datos.getPoliticas());
+            p.setImagenUrl(datos.getImagenUrl());
             return productoRepository.save(p);
         });
     }
 
-    // Eliminar producto
     public boolean eliminar(Long id) {
-        if (!productoRepository.existsById(id)) {
-            return false;
+        if (productoRepository.existsById(id)) {
+            productoRepository.deleteById(id);
+            return true;
         }
-        productoRepository.deleteById(id);
-        return true;
+        return false;
     }
 
-    // Asignar categoría a producto
-    public Optional<Producto> asignarCategoria(Long productoId, Long categoriaId) {
-        Optional<Producto> productoOpt = productoRepository.findById(productoId);
-        Optional<Categoria> categoriaOpt = categoriaRepository.findById(categoriaId);
-
-        if (productoOpt.isEmpty() || categoriaOpt.isEmpty()) {
-            return Optional.empty();
-        }
-
-        Producto producto = productoOpt.get();
-        Categoria categoria = categoriaOpt.get();
-
-        if (!producto.getCategorias().contains(categoria)) {
-            producto.getCategorias().add(categoria);
-            productoRepository.save(producto);
-        }
-        return Optional.of(producto);
+    // Métodos de búsqueda para BusquedaController
+    public List<Producto> buscarPorGenero(String genero) {
+        return productoRepository.findByGenero(genero);
     }
 
-    // Quitar categoría de producto
-    public Optional<Producto> quitarCategoria(Long productoId, Long categoriaId) {
-        return productoRepository.findById(productoId).map(p -> {
-            p.getCategorias().removeIf(c -> c.getId().equals(categoriaId));
-            return productoRepository.save(p);
-        });
+    public List<Producto> buscarPorPlataforma(String plataforma) {
+        return productoRepository.findByPlataforma(plataforma);
     }
 
-    // Obtener políticas del producto
-    public Optional<String> obtenerPoliticas(Long id) {
-        return productoRepository.findById(id)
-                .map(Producto::getPoliticas);
+    public List<Producto> buscarPorEstado(String estado) {
+        return productoRepository.findByEstado(estado);
     }
 
-    // Datos listos para compartir
-    public Optional<Map<String, String>> obtenerDatosCompartir(Long id) {
-        return productoRepository.findById(id).map(p -> Map.of(
-                "titulo",     p.getTitulo(),
-                "precio",     String.valueOf(p.getPrecio()),
-                "plataforma", p.getPlataforma() != null ? p.getPlataforma() : "",
-                "imagenUrl",  p.getImagenUrl() != null ? p.getImagenUrl() : "",
-                "link",       "https://juegos.app/producto/" + p.getId()
-        ));
+    public List<Producto> buscarPorPrecio(double min, double max) {
+        return productoRepository.findByPrecioBetween(min, max);
     }
 
-    // Puntuar producto
-    public Optional<Producto> puntuar(Long id, double puntuacion) {
-        if (puntuacion < 1 || puntuacion > 5) return Optional.empty();
-
-        return productoRepository.findById(id).map(p -> {
-            p.setTotalVotos(p.getTotalVotos() + 1);
-            p.setSumaRatings(p.getSumaRatings() + puntuacion);
-            double promedio = p.getSumaRatings() / p.getTotalVotos();
-            p.setRating(Math.round(promedio * 10.0) / 10.0);
-            return productoRepository.save(p);
-        });
+    public List<Producto> buscarPorRating(double min) {
+        return productoRepository.findByRatingGreaterThanEqual(min);
     }
 }

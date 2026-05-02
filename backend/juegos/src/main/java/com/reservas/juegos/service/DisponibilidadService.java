@@ -1,35 +1,38 @@
 package com.reservas.juegos.service;
 
 import com.reservas.juegos.entities.Producto;
+import com.reservas.juegos.repository.ProductoRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Optional;
 
 @Service
 public class DisponibilidadService {
-    private final List<Producto> productos = new ArrayList<>();
 
-    public void agregarProducto(Producto producto) {
-        productos.add(producto);
+    private final ProductoRepository productoRepository;
+
+    public DisponibilidadService(ProductoRepository productoRepository) {
+        this.productoRepository = productoRepository;
+    }
+    /** Verificar disponibilidad de un producto por ID */
+    public boolean verificarDisponibilidad(Long productoId) {
+        Optional<Producto> productoOpt = productoRepository.findById(productoId);
+        if (productoOpt.isEmpty()) return false;
+
+        Producto producto = productoOpt.get();
+        return producto.getStock() > 0 &&
+                producto.getEstado() != null &&
+                producto.getEstado().equalsIgnoreCase("DISPONIBLE");
     }
 
-    public boolean verificarDisponibilidad(Long id) {
-        return productos.stream()
-                .filter(p -> p.getId() != null && p.getId().equals(id))
-                .map(p -> p.getEstado() != null && p.getEstado().equalsIgnoreCase("disponible"))
-                .findFirst()
-                .orElse(false);
-    }
+    /** Cambiar disponibilidad de un producto */
+    public boolean cambiarDisponibilidad(Long productoId, boolean disponible) {
+        Optional<Producto> productoOpt = productoRepository.findById(productoId);
+        if (productoOpt.isEmpty()) return false;
 
-    public boolean cambiarDisponibilidad(Long id, boolean disponible) {
-        return productos.stream()
-                .filter(p -> p.getId() != null && p.getId().equals(id))
-                .findFirst()
-                .map(p -> {
-                    p.setEstado(disponible ? "disponible" : "no_disponible");
-                    return true;
-                })
-                .orElse(false);
+        Producto producto = productoOpt.get();
+        producto.setEstado(disponible ? "DISPONIBLE" : "NO_DISPONIBLE");
+        productoRepository.save(producto);
+        return true;
     }
 }

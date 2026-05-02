@@ -22,38 +22,40 @@ public class Producto {
     private String genero;
     private double precio;
     private int stock;
-    private String estado;
+    private String estado;       // DISPONIBLE, RESERVADO, etc.
     private double rating;
     private String emoji;
 
-    // 26.Ver bloque de políticas del producto
+    // Bloque de políticas del producto
     @Column(columnDefinition = "TEXT")
     private String politicas;
 
-    // 27.Compartir: URL de imagen para usar en redes sociales
+    // URL de imagen para compartir
     private String imagenUrl;
 
-    // Acumuladores para calcular rating promedio (#28)
+    // Acumuladores para calcular rating promedio
     private int totalVotos;
     private double sumaRatings;
 
-
-
+    // Relación con Caracteristica
     @JsonIgnore
     @OneToMany(mappedBy = "producto", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Caracteristica> caracteristicas = new ArrayList<>();
 
+    // Relación con Categoria (muchos a muchos)
     @JsonIgnore
     @ManyToMany
     @JoinTable(
-        name = "producto_categoria",
-        joinColumns = @JoinColumn(name = "producto_id"),
-        inverseJoinColumns = @JoinColumn(name = "categoria_id")
+            name = "producto_categoria",
+            joinColumns = @JoinColumn(name = "producto_id"),
+            inverseJoinColumns = @JoinColumn(name = "categoria_id")
     )
     private List<Categoria> categorias = new ArrayList<>();
 
+    // Constructor vacío
     public Producto() {}
 
+    // Constructor con parámetros principales
     public Producto(String titulo, String plataforma, String genero,
                     double precio, int stock, String estado, double rating, String emoji) {
         this.titulo = titulo;
@@ -66,6 +68,7 @@ public class Producto {
         this.emoji = emoji;
     }
 
+    // Getters y Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
@@ -93,12 +96,6 @@ public class Producto {
     public String getEmoji() { return emoji; }
     public void setEmoji(String emoji) { this.emoji = emoji; }
 
-    public List<Caracteristica> getCaracteristicas() { return caracteristicas; }
-    public void setCaracteristicas(List<Caracteristica> caracteristicas) { this.caracteristicas = caracteristicas; }
-
-    public List<Categoria> getCategorias() { return categorias; }
-    public void setCategorias(List<Categoria> categorias) { this.categorias = categorias; }
-
     public String getPoliticas() { return politicas; }
     public void setPoliticas(String politicas) { this.politicas = politicas; }
 
@@ -110,4 +107,10 @@ public class Producto {
 
     public double getSumaRatings() { return sumaRatings; }
     public void setSumaRatings(double sumaRatings) { this.sumaRatings = sumaRatings; }
+
+    public List<Caracteristica> getCaracteristicas() { return caracteristicas; }
+    public void setCaracteristicas(List<Caracteristica> caracteristicas) { this.caracteristicas = caracteristicas; }
+
+    public List<Categoria> getCategorias() { return categorias; }
+    public void setCategorias(List<Categoria> categorias) { this.categorias = categorias; }
 }
