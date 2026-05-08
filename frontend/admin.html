@@ -69,25 +69,25 @@
         <div class="stat-card">
           <span class="stat-card-icon">🎮</span>
           <div class="stat-card-label">Total productos</div>
-          <div class="stat-card-value" id="totalCount">16</div>
+          <div class="stat-card-value" id="totalCount">0</div>
           <div class="stat-card-sub up">↑ +3 este mes</div>
         </div>
         <div class="stat-card">
           <span class="stat-card-icon">✅</span>
           <div class="stat-card-label">Disponibles</div>
-          <div class="stat-card-value" id="availCount">12</div>
+          <div class="stat-card-value" id="availCount">0</div>
           <div class="stat-card-sub up">↑ En stock</div>
         </div>
         <div class="stat-card">
           <span class="stat-card-icon">📦</span>
           <div class="stat-card-label">Reservados</div>
-          <div class="stat-card-value" id="reservedCount">3</div>
+          <div class="stat-card-value" id="reservedCount">0</div>
           <div class="stat-card-sub">↔ Activos</div>
         </div>
         <div class="stat-card">
           <span class="stat-card-icon">❌</span>
           <div class="stat-card-label">Agotados</div>
-          <div class="stat-card-value" id="outCount">1</div>
+          <div class="stat-card-value" id="outCount">0</div>
           <div class="stat-card-sub down">↓ Sin stock</div>
         </div>
       </div>
@@ -116,23 +116,23 @@
             <option value="agotado">Agotado</option>
           </select>
         </div>
-        <div class="admin-result-count" id="resultCount">Mostrando 16 productos</div>
+        <div class="admin-result-count" id="resultCount">Mostrando 0 productos</div>
       </div>
 
       <!-- Tabla -->
       <div class="admin-table-wrap">
         <table class="admin-table">
           <thead>
-            <tr>
-              <th>Producto</th>
-              <th>Plataforma</th>
-              <th>Género</th>
-              <th class="sortable">Precio/día ↕</th>
-              <th>Rating</th>
-              <th>Estado</th>
-              <th>Stock</th>
-              <th>Acciones</th>
-            </tr>
+          <tr>
+            <th>Producto</th>
+            <th>Plataforma</th>
+            <th>Género</th>
+            <th class="sortable">Precio/día ↕</th>
+            <th>Rating</th>
+            <th>Estado</th>
+            <th>Stock</th>
+            <th>Acciones</th>
+          </tr>
           </thead>
           <tbody id="tableBody"></tbody>
         </table>
@@ -140,7 +140,7 @@
 
       <!-- Paginación -->
       <div class="admin-pagination">
-        <div class="pagination-info" id="pagInfo">Mostrando 1–8 de 16 productos</div>
+        <div class="pagination-info" id="pagInfo">Mostrando 0–0 de 0 productos</div>
         <div class="pagination-btns">
           <button class="pag-btn" id="prevPage" onclick="changePage(-1)" disabled>←</button>
           <button class="pag-btn active" id="page1" onclick="goPage(1)">1</button>
@@ -222,6 +222,21 @@
               <option value="⚽">⚽ Deportes</option>
             </select>
           </div>
+
+          <!-- Campos adicionales requeridos por el backend -->
+          <div class="col-12">
+            <label class="form-label-playres">Imagen URL</label>
+            <input type="text" class="form-control-playres" id="fImageUrl" placeholder="https://.../imagen.png">
+          </div>
+          <div class="col-12">
+            <label class="form-label-playres">Políticas</label>
+            <textarea class="form-control-playres" id="fPoliticas" placeholder="Políticas del producto"></textarea>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label-playres">Categoria Id</label>
+            <input type="number" class="form-control-playres" id="fCategoriaId" placeholder="1">
+          </div>
+
         </div>
       </div>
       <div class="modal-footer">
@@ -250,14 +265,15 @@
 </div>
 
 <!-- TOAST -->
-<div class="playres-toast" id="toastEl">
+<div class="playres-toast" id="toastEl" style="display:none">
   <span class="toast-icon" id="toastIcon">✅</span>
   <span class="toast-msg" id="toastMsg">Producto guardado</span>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<!-- SCRIPTS: orden correcto -->
+<script src="js/juegos.js"></script>
 <script src="js/api.js"></script>
 <script src="js/app.js"></script>
-<script src="js/juegos.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

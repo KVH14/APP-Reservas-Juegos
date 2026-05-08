@@ -1,11 +1,18 @@
 // ════════════════════════════════════════════════════════════
-//  app.js — JavaScript general de Playres
+//  app.js — JavaScript general de Playres (versión integrada con API)
 //  Secciones:
 //    1. NAVBAR scroll
 //    2. CATÁLOGO — filtros, galería, paginación
 //    3. PRODUCT DETAIL — galería, días, tabs
-//    4. ADMIN — tabla, modales, CRUD
+//    4. ADMIN — tabla, modales, CRUD (con ProductoAPI)
 // ════════════════════════════════════════════════════════════
+
+// ── 0. Nota importante ───────────────────────────────────────
+// Asegúrate de cargar en tu HTML los scripts en este orden:
+// <script src="js/juegos.js"></script>
+// <script src="js/api.js"></script>   // define ProductoAPI
+// <script src="js/app.js"></script>
+// Si no respetas el orden, app.js fallará porque ProductoAPI no existirá.
 
 // ── 1. NAVBAR SCROLL ─────────────────────────────────────────
 const navbar = document.querySelector(".navbar-playres");
@@ -114,7 +121,7 @@ if (document.getElementById("gamesGrid")) {
                 <div class="game-platform">${g.platform}</div>
                 <h3 class="game-title-catalog">${g.title}</h3>
                 <div class="game-bottom">
-                  <div class="game-price">$${g.price.toLocaleString("es-CO")}<span>/día</span></div>
+                  <div class="game-price">$${Number(g.price).toLocaleString("es-CO")}<span>/día</span></div>
                   <div><span class="game-stars">★★★★★</span><span class="game-rating">${g.rating}</span></div>
                 </div>
                 <a href="product-detail.html" class="catalog-btn-ver">Ver detalles →</a>
@@ -197,6 +204,7 @@ if (document.getElementById("galleryMain")) {
 
 // ════════════════════════════════════════════════════════════
 //  4. ADMIN PANEL (solo si existe #tableBody)
+//     Ahora integrado con ProductoAPI (definido en api.js)
 // ════════════════════════════════════════════════════════════
 if (document.getElementById("tableBody")) {
   let products = [];           // se llena desde el backend
@@ -205,13 +213,29 @@ if (document.getElementById("tableBody")) {
   const perPage = 8;
   let deleteIndex = -1;
 
+  // Cargar productos desde backend y normalizar campos para la UI
   async function cargarProductos() {
     try {
-      products = await ProductoAPI.listar();
+      const raw = await ProductoAPI.listar();
+      products = (raw || []).map(p => ({
+        id: p.id,
+        title: p.titulo || p.title || `Producto ${p.id}`,
+        platform: p.plataforma || p.platform || "PS5",
+        genre: p.genero || p.genre || "Acción",
+        price: p.precio || p.price || 0,
+        rating: p.rating || 0,
+        stock: p.stock || 0,
+        status: (p.estado || p.status || 'disponible').toLowerCase(),
+        emoji: p.emoji || '🎮',
+        bg: p.bg || 'game-thumb-purple',
+        categorias: p.categorias || [],
+        // conserva el objeto original por si lo necesitas
+        _raw: p
+      }));
       filteredProds = [...products];
       renderTable();
     } catch (e) {
-      showToast("danger", "❌", "No se pudo conectar al backend: " + e.message);
+      showToast('danger', '❌', 'No se pudo conectar al backend: ' + e.message);
     }
   }
 
@@ -236,7 +260,7 @@ if (document.getElementById("tableBody")) {
           </td>
           <td><span class="platform-tbl">${p.platform}</span></td>
           <td>${p.genre}</td>
-          <td class="tbl-price">$${p.price.toLocaleString("es-CO")}</td>
+          <td class="tbl-price">$${Number(p.price).toLocaleString("es-CO")}</td>
           <td><span class="tbl-stars">${"★".repeat(Math.floor(p.rating))}</span> <span class="tbl-rating-num">${p.rating}</span></td>
           <td><span class="status-badge ${p.status}">${p.status.charAt(0).toUpperCase() + p.status.slice(1)}</span></td>
           <td class="${p.stock === 0 ? "tbl-stock-out" : "tbl-stock"}">${p.stock}</td>
@@ -290,7 +314,7 @@ if (document.getElementById("tableBody")) {
       (p) =>
         (!q ||
           p.title.toLowerCase().includes(q) ||
-          p.id.toLowerCase().includes(q)) &&
+          String(p.id).toLowerCase().includes(q)) &&
         (!plt || p.platform === plt) &&
         (!sts || p.status === sts),
     );
@@ -307,11 +331,13 @@ if (document.getElementById("tableBody")) {
     renderTable();
   };
 
+  // Abrir modal para agregar (usa el modal existente en tu HTML)
   window.openAddModal = function () {
     document.getElementById("modalTitle").textContent = "➕ Agregar producto";
     document.getElementById("editIndex").value = -1;
-    ["fTitle", "fPrice", "fStock", "fRating"].forEach(
-      (id) => (document.getElementById(id).value = ""),
+    // Limpiar campos del modal (asegúrate que existan en tu HTML)
+    ["fTitle", "fPrice", "fStock", "fRating", "fImageUrl", "fPoliticas", "fCategoriaId"].forEach(
+      (id) => { const el = document.getElementById(id); if (el) el.value = ""; }
     );
     document.getElementById("fPlatform").value = "PS5";
     document.getElementById("fGenre").value = "RPG";
@@ -320,22 +346,34 @@ if (document.getElementById("tableBody")) {
     new bootstrap.Modal(document.getElementById("productModal")).show();
   };
 
-  window.openEditModal = function (idx) {
+  // Abrir modal para editar (carga datos frescos desde backend)
+  window.openEditModal = async function (idx) {
     const p = products[idx];
-    document.getElementById("modalTitle").textContent = "✏️ Editar producto";
-    document.getElementById("editIndex").value = idx;
-    document.getElementById("fTitle").value = p.title;
-    document.getElementById("fPrice").value = p.price;
-    document.getElementById("fStock").value = p.stock;
-    document.getElementById("fRating").value = p.rating;
-    document.getElementById("fPlatform").value = p.platform;
-    document.getElementById("fGenre").value = p.genre;
-    document.getElementById("fStatus").value = p.status;
-    document.getElementById("fEmoji").value = p.emoji;
-    new bootstrap.Modal(document.getElementById("productModal")).show();
+    try {
+      const fresh = await ProductoAPI.obtener(p.id);
+      document.getElementById("modalTitle").textContent = "✏️ Editar producto";
+      document.getElementById("editIndex").value = idx;
+      document.getElementById("fTitle").value = fresh.titulo || fresh.title || p.title;
+      document.getElementById("fPrice").value = fresh.precio || fresh.price || p.price;
+      document.getElementById("fStock").value = fresh.stock || p.stock;
+      document.getElementById("fRating").value = fresh.rating || p.rating;
+      document.getElementById("fPlatform").value = fresh.plataforma || fresh.platform;
+      document.getElementById("fGenre").value = fresh.genero || fresh.genre;
+      document.getElementById("fStatus").value = fresh.estado || fresh.status;
+      document.getElementById("fEmoji").value = fresh.emoji || p.emoji;
+      if (document.getElementById("fImageUrl")) document.getElementById("fImageUrl").value = fresh.imagenUrl || "";
+      if (document.getElementById("fPoliticas")) document.getElementById("fPoliticas").value = fresh.politicas || "";
+      if (document.getElementById("fCategoriaId")) {
+        document.getElementById("fCategoriaId").value = fresh.categorias && fresh.categorias[0] ? fresh.categorias[0].id : "";
+      }
+      new bootstrap.Modal(document.getElementById("productModal")).show();
+    } catch (err) {
+      showToast("danger", "❌", "No se pudo cargar el producto: " + err.message);
+    }
   };
 
-  window.saveProduct = function () {
+  // Guardar producto (crear o actualizar) usando ProductoAPI
+  window.saveProduct = async function () {
     const idx = parseInt(document.getElementById("editIndex").value);
     const title = document.getElementById("fTitle").value.trim();
     const price = parseInt(document.getElementById("fPrice").value);
@@ -344,51 +382,37 @@ if (document.getElementById("tableBody")) {
       return;
     }
 
-    const bgMap = {
-      PS5: "game-thumb-purple",
-      Xbox: "game-thumb-red",
-      Switch: "game-thumb-green",
-      PC: "game-thumb-blue",
-    };
-    const platform = document.getElementById("fPlatform").value;
-
-    const prod = {
-      id:
-        idx >= 0
-          ? products[idx].id
-          : "PLY-" + String(products.length + 1).padStart(3, "0"),
-      title,
-      platform,
-      genre: document.getElementById("fGenre").value,
-      price,
+    const dto = {
+      titulo: title,
+      plataforma: document.getElementById("fPlatform").value,
+      genero: document.getElementById("fGenre").value,
+      precio: price,
       rating: parseFloat(document.getElementById("fRating").value) || 4.5,
-      stock:
-        document.getElementById("fStock").value !== ""
-          ? parseInt(document.getElementById("fStock").value)
-          : idx >= 0
-            ? products[idx].stock
-            : 0,
-      status: document.getElementById("fStatus").value,
+      stock: document.getElementById("fStock").value !== "" ? parseInt(document.getElementById("fStock").value) : 0,
+      estado: document.getElementById("fStatus").value,
       emoji: document.getElementById("fEmoji").value,
-      bg: bgMap[platform] || "game-thumb-purple",
-      tag: "",
-      tagClass: "",
-      description: "",
+      imagenUrl: document.getElementById("fImageUrl") ? document.getElementById("fImageUrl").value : undefined,
+      politicas: document.getElementById("fPoliticas") ? document.getElementById("fPoliticas").value : undefined,
+      categoriaId: document.getElementById("fCategoriaId") ? Number(document.getElementById("fCategoriaId").value) : null
     };
 
-    if (idx >= 0) {
-      products[idx] = prod;
-      showToast("success", "✅", "Producto actualizado.");
-    } else {
-      products.push(prod);
-      showToast("success", "✅", "Producto agregado.");
+    try {
+      if (idx >= 0) {
+        const prodId = products[idx].id;
+        await ProductoAPI.actualizar(prodId, dto);
+        showToast("success", "✅", "Producto actualizado.");
+      } else {
+        await ProductoAPI.crear(dto);
+        showToast("success", "✅", "Producto agregado.");
+      }
+      await cargarProductos();
+      bootstrap.Modal.getInstance(document.getElementById("productModal")).hide();
+    } catch (err) {
+      showToast("danger", "❌", err.message || "Error al guardar");
     }
-
-    filteredProds = [...products];
-    filterTable();
-    bootstrap.Modal.getInstance(document.getElementById("productModal")).hide();
   };
 
+  // Abrir modal de confirmación de borrado
   window.openDeleteModal = function (idx) {
     deleteIndex = idx;
     document.getElementById("deleteGameName").textContent =
@@ -396,20 +420,29 @@ if (document.getElementById("tableBody")) {
     new bootstrap.Modal(document.getElementById("deleteModal")).show();
   };
 
-  window.confirmDelete = function () {
+  // Confirmar eliminación usando ProductoAPI
+  window.confirmDelete = async function () {
     if (deleteIndex < 0) return;
-    const name = products[deleteIndex].title;
-    products.splice(deleteIndex, 1);
-    deleteIndex = -1;
-    filteredProds = [...products];
-    filterTable();
-    bootstrap.Modal.getInstance(document.getElementById("deleteModal")).hide();
-    showToast("danger", "🗑️", `"${name}" eliminado.`);
+    const prod = products[deleteIndex];
+    try {
+      await ProductoAPI.eliminar(prod.id);
+      showToast("danger", "🗑️", `"${prod.title}" eliminado.`);
+      deleteIndex = -1;
+      await cargarProductos();
+      bootstrap.Modal.getInstance(document.getElementById("deleteModal")).hide();
+    } catch (err) {
+      showToast("danger", "❌", "No se pudo eliminar: " + err.message);
+    }
   };
 
   let toastTimer;
   function showToast(type, icon, msg) {
     const el = document.getElementById("toastEl");
+    if (!el) {
+      console.warn("Toast element not found");
+      alert(msg);
+      return;
+    }
     document.getElementById("toastIcon").textContent = icon;
     document.getElementById("toastMsg").textContent = msg;
     el.className = `playres-toast ${type} show`;
@@ -417,8 +450,8 @@ if (document.getElementById("tableBody")) {
     toastTimer = setTimeout(() => el.classList.remove("show"), 3000);
   }
 
-  // Iniciar admin
-  renderTable();
+  // Iniciar admin: cargar productos desde backend
+  cargarProductos();
 }
 
 // ==========================================
