@@ -11,4 +11,6 @@ public interface ReservaRepository extends JpaRepository<Reserva, Long> {
     List<Reserva> findByEmailCliente(String emailCliente);
     List<Reserva> findByProductoId(Long productoId);
     List<Reserva> findByEstado(String estado);
+    List<Reserva> findByFechaDevolucionIsNull();
+    List<Reserva> findByFechaDevolucionIsNotNull();
 }

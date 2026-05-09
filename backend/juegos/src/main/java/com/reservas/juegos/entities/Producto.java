@@ -44,9 +44,9 @@ public class Producto {
     @JsonIgnore
     @ManyToMany
     @JoinTable(
-        name = "producto_categoria",
-        joinColumns = @JoinColumn(name = "producto_id"),
-        inverseJoinColumns = @JoinColumn(name = "categoria_id")
+            name = "producto_categoria",
+            joinColumns = @JoinColumn(name = "producto_id"),
+            inverseJoinColumns = @JoinColumn(name = "categoria_id")
     )
     private List<Categoria> categorias = new ArrayList<>();
 
