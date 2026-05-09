@@ -1,5 +1,6 @@
 package com.reservas.juegos.controller;
- 
+
+import com.reservas.juegos.dto.ProductoDTO;
 import com.reservas.juegos.entities.Caracteristica;
 import com.reservas.juegos.entities.Producto;
 import com.reservas.juegos.service.CaracteristicaService;
@@ -9,11 +10,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
- 
+
 import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
- 
+
 /**
  * Endpoints:
  *   GET    /api/productos                          → listar todos
@@ -33,34 +34,34 @@ import java.util.Map;
 @RequestMapping("/api/productos")
 @CrossOrigin(origins = "*")
 public class ProductoController {
- 
+
     @Autowired
     private ProductoService productoService;
- 
+
     @Autowired
     private CaracteristicaService caracteristicaService;
- 
+
     // ── GET /api/productos ──────────────────────────────────────────────────────
     // Listar todos (con paginación opcional via ?page=0&size=10)
     @GetMapping
     public ResponseEntity<?> listarTodos(
             @RequestParam(required = false) Integer page,
             @RequestParam(required = false) Integer size) {
- 
+
         if (page == null || size == null) {
             return ResponseEntity.ok(productoService.listarTodos());
         }
- 
+
         Page<Producto> productosPage = productoService.listarPaginado(page, size);
         Map<String, Object> response = new HashMap<>();
         response.put("contenido", productosPage.getContent());
         response.put("paginaActual", productosPage.getNumber());
         response.put("totalElementos", productosPage.getTotalElements());
         response.put("totalPaginas", productosPage.getTotalPages());
- 
+
         return ResponseEntity.ok(response);
     }
- 
+
     // ── GET /api/productos/{id} ─────────────────────────────────────────────────
     @GetMapping("/{id}")
     public ResponseEntity<Producto> buscarPorId(@PathVariable Long id) {
@@ -68,7 +69,7 @@ public class ProductoController {
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
- 
+
     // ── POST /api/productos ─────────────────────────────────────────────────────
     // Recibe Producto directo (sin DTO), devuelve 201 + producto creado
     @PostMapping
@@ -80,7 +81,7 @@ public class ProductoController {
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
         }
     }
- 
+
     // ── PUT /api/productos/{id} ─────────────────────────────────────────────────
     // Recibe Producto directo, devuelve 200 + producto actualizado
     @PutMapping("/{id}")
@@ -91,7 +92,7 @@ public class ProductoController {
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
- 
+
     // ── DELETE /api/productos/{id} ──────────────────────────────────────────────
     // Devuelve 200 + mensaje (en vez de 204 sin body, para que Postman muestre respuesta)
     @DeleteMapping("/{id}")
@@ -102,7 +103,7 @@ public class ProductoController {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(Map.of("error", "Producto no encontrado con id: " + id));
     }
- 
+
     // ── POST /api/productos/{id}/categorias/{categoriaId} ──────────────────────
     // #12 Asignar categoría a producto
     @PostMapping("/{id}/categorias/{categoriaId}")
@@ -113,7 +114,7 @@ public class ProductoController {
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
- 
+
     // ── DELETE /api/productos/{id}/categorias/{categoriaId} ────────────────────
     // Quitar categoría de producto → devuelve 200 + producto actualizado
     @DeleteMapping("/{id}/categorias/{categoriaId}")
@@ -124,7 +125,7 @@ public class ProductoController {
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
- 
+
     // ── GET /api/productos/{id}/caracteristicas ─────────────────────────────────
     @GetMapping("/{id}/caracteristicas")
     public ResponseEntity<List<Caracteristica>> verCaracteristicas(@PathVariable Long id) {
@@ -132,7 +133,7 @@ public class ProductoController {
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
- 
+
     // ── GET /api/productos/{id}/politicas ───────────────────────────────────────
     // #26 Ver bloque de políticas del producto
     @GetMapping("/{id}/politicas")
@@ -141,7 +142,7 @@ public class ProductoController {
                 .map(pol -> ResponseEntity.ok((Object) Map.of("politicas", pol != null ? pol : "")))
                 .orElse(ResponseEntity.notFound().build());
     }
- 
+
     // ── GET /api/productos/{id}/compartir ───────────────────────────────────────
     // #27 Compartir producto en redes sociales
     @GetMapping("/{id}/compartir")
@@ -150,14 +151,14 @@ public class ProductoController {
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
- 
+
     // ── POST /api/productos/{id}/puntuar ────────────────────────────────────────
     // #28 Puntuar producto → body: { "puntuacion": 4.5 }
     @PostMapping("/{id}/puntuar")
     public ResponseEntity<?> puntuar(
             @PathVariable Long id,
             @RequestBody Map<String, Double> body) {
- 
+
         Double puntuacion = body.get("puntuacion");
         if (puntuacion == null) {
             return ResponseEntity.badRequest().body(Map.of("error", "El campo 'puntuacion' es obligatorio."));
@@ -165,23 +166,23 @@ public class ProductoController {
         if (puntuacion < 1 || puntuacion > 5) {
             return ResponseEntity.badRequest().body(Map.of("error", "La puntuación debe estar entre 1 y 5."));
         }
- 
+
         return productoService.puntuar(id, puntuacion)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
- 
+
     // ── POST /api/productos/importarRawg ────────────────────────────────────────
     // #38 Importar juego desde RAWG
     // Body esperado: { "rawgId": 3498, "precio": 59.99, "stock": 10, "plataforma": "PC" }
     @PostMapping("/importarRawg")
-    public ResponseEntity<?> importarRawg(@RequestBody Producto producto) {
+    public ResponseEntity<?> importarRawg(@RequestBody ProductoDTO dto) {
         try {
             Producto nuevo = productoService.importarDesdeRawg(
-                    producto.getRawgId(),
-                    producto.getPrecio(),
-                    producto.getStock(),
-                    producto.getPlataforma()
+                    dto.getRawgId(),
+                    dto.getPrecio(),
+                    dto.getStock(),
+                    dto.getPlataforma()
             );
             return ResponseEntity.status(HttpStatus.CREATED).body(nuevo);
         } catch (RuntimeException e) {
@@ -190,4 +191,3 @@ public class ProductoController {
         }
     }
 }
- 

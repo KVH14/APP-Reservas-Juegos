@@ -2,7 +2,7 @@ package com.reservas.juegos.dto;
 
 public class ProductoDTO {
 
-    private Long id;              // Identificador opcional para actualizaciones
+    private Long id;
     private String titulo;
     private String plataforma;
     private String genero;
@@ -13,7 +13,8 @@ public class ProductoDTO {
     private String emoji;
     private String politicas;
     private String imagenUrl;
-    private Long categoriaId;     // ID de la categoría existente
+    private Long categoriaId;
+    private Long rawgId;          // ← agregado para el endpoint importarRawg
 
     // Constructor vacío
     public ProductoDTO() {}
@@ -21,7 +22,7 @@ public class ProductoDTO {
     // Constructor con parámetros
     public ProductoDTO(Long id, String titulo, String plataforma, String genero,
                        double precio, int stock, String estado, double rating,
-                       String emoji, String politicas, String imagenUrl, Long categoriaId) {
+                       String emoji, String politicas, String imagenUrl, Long categoriaId, Long rawgId) {
         this.id = id;
         this.titulo = titulo;
         this.plataforma = plataforma;
@@ -34,6 +35,7 @@ public class ProductoDTO {
         this.politicas = politicas;
         this.imagenUrl = imagenUrl;
         this.categoriaId = categoriaId;
+        this.rawgId = rawgId;
     }
 
     // Getters y setters
@@ -72,4 +74,7 @@ public class ProductoDTO {
 
     public Long getCategoriaId() { return categoriaId; }
     public void setCategoriaId(Long categoriaId) { this.categoriaId = categoriaId; }
+
+    public Long getRawgId() { return rawgId; }
+    public void setRawgId(Long rawgId) { this.rawgId = rawgId; }
 }
