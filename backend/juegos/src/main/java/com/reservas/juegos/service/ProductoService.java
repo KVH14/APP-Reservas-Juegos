@@ -4,14 +4,17 @@ import com.reservas.juegos.entities.Categoria;
 import com.reservas.juegos.entities.Producto;
 import com.reservas.juegos.repository.CategoriaRepository;
 import com.reservas.juegos.repository.ProductoRepository;
+import com.reservas.juegos.rawg.RawgJuegoDTO;
+import com.reservas.juegos.rawg.RawgService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Map;       // 👈 necesario para Map.of()
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -23,23 +26,31 @@ public class ProductoService {
     @Autowired
     private CategoriaRepository categoriaRepository;
 
-    // Listar todos los productos
+    // Servicio RAWG
+    @Autowired
+    private RawgService rawgService;
+
+    @Value("${rawg.api.key}")
+    private String rawgApiKey;
+
+    @Value("${rawg.api.url}")
+    private String rawgApiUrl;
+
+    // ── Listar todos los productos ──
     public List<Producto> listarTodos() {
         return productoRepository.findAll();
     }
 
-    // Listar productos con paginación
     public Page<Producto> listarPaginado(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         return productoRepository.findAll(pageable);
     }
 
-    // Buscar producto por ID
     public Optional<Producto> buscarPorId(Long id) {
         return productoRepository.findById(id);
     }
 
-    // Crear producto con validación básica
+    // ── Crear producto ──
     public Producto crear(Producto producto) {
         if (producto.getTitulo() == null || producto.getTitulo().isBlank()) {
             throw new IllegalArgumentException("El título del producto es obligatorio");
@@ -47,7 +58,7 @@ public class ProductoService {
         return productoRepository.save(producto);
     }
 
-    // Actualizar producto
+    // ── Actualizar producto ──
     public Optional<Producto> actualizar(Long id, Producto datos) {
         return productoRepository.findById(id).map(p -> {
             p.setTitulo(datos.getTitulo());
@@ -58,11 +69,14 @@ public class ProductoService {
             p.setEstado(datos.getEstado());
             p.setRating(datos.getRating());
             p.setEmoji(datos.getEmoji());
+            p.setPoliticas(datos.getPoliticas());
+            p.setImagenUrl(datos.getImagenUrl());
+            p.setRawgId(datos.getRawgId());
             return productoRepository.save(p);
         });
     }
 
-    // Eliminar producto
+    // ── Eliminar producto ──
     public boolean eliminar(Long id) {
         if (!productoRepository.existsById(id)) {
             return false;
@@ -71,7 +85,7 @@ public class ProductoService {
         return true;
     }
 
-    // Asignar categoría a producto
+    // ── Categorías ──
     public Optional<Producto> asignarCategoria(Long productoId, Long categoriaId) {
         Optional<Producto> productoOpt = productoRepository.findById(productoId);
         Optional<Categoria> categoriaOpt = categoriaRepository.findById(categoriaId);
@@ -90,7 +104,6 @@ public class ProductoService {
         return Optional.of(producto);
     }
 
-    // Quitar categoría de producto
     public Optional<Producto> quitarCategoria(Long productoId, Long categoriaId) {
         return productoRepository.findById(productoId).map(p -> {
             p.getCategorias().removeIf(c -> c.getId().equals(categoriaId));
@@ -98,13 +111,12 @@ public class ProductoService {
         });
     }
 
-    // Obtener políticas del producto
+    // ── Políticas y compartir ──
     public Optional<String> obtenerPoliticas(Long id) {
         return productoRepository.findById(id)
                 .map(Producto::getPoliticas);
     }
 
-    // Datos listos para compartir
     public Optional<Map<String, String>> obtenerDatosCompartir(Long id) {
         return productoRepository.findById(id).map(p -> Map.of(
                 "titulo",     p.getTitulo(),
@@ -115,7 +127,7 @@ public class ProductoService {
         ));
     }
 
-    // Puntuar producto
+    // ── Rating ──
     public Optional<Producto> puntuar(Long id, double puntuacion) {
         if (puntuacion < 1 || puntuacion > 5) return Optional.empty();
 
@@ -126,5 +138,30 @@ public class ProductoService {
             p.setRating(Math.round(promedio * 10.0) / 10.0);
             return productoRepository.save(p);
         });
+    }
+
+    // ── Importar juego desde RAWG ──
+    public Producto importarDesdeRawg(Long rawgId, double precio, int stock, String plataforma) {
+        RawgJuegoDTO rawgJuego = rawgService.obtenerPorId(rawgId);
+
+        if (rawgJuego == null) {
+            throw new RuntimeException("No se encontró el juego en RAWG con id " + rawgId);
+        }
+
+        Producto producto = new Producto();
+        producto.setTitulo(rawgJuego.getNombre());       // título real desde RAWG
+        producto.setImagenUrl(rawgJuego.getImagenUrl()); // imagen real desde RAWG
+        producto.setRawgId(rawgId);
+        producto.setPrecio(precio);
+        producto.setStock(stock);
+        producto.setPlataforma(plataforma);
+        producto.setEstado("DISPONIBLE");
+
+        // opcional: guardar género si existe
+        if (rawgJuego.getGenres() != null && !rawgJuego.getGenres().isEmpty()) {
+            producto.setGenero(rawgJuego.getGenres().get(0).getName());
+        }
+
+        return productoRepository.save(producto);
     }
 }

@@ -24,6 +24,7 @@ import java.util.Map;
  *   POST   /api/productos/{id}/categorias/{catId}  → #12 asignar categoría
  *   DELETE /api/productos/{id}/categorias/{catId}  → quitar categoría
  *   GET    /api/productos/{id}/caracteristicas     → visualizar características
+ *   POST   /api/productos/importarRawg             → #38 importar juego desde RAWG
  */
 @RestController
 @RequestMapping("/api/productos")
@@ -109,7 +110,7 @@ public class ProductoController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    //#26 ver bloque de politicas del producto
+    // #26 ver bloque de politicas del producto
     @GetMapping("/{id}/politicas")
     public ResponseEntity<?> verPoliticas(@PathVariable Long id) {
         return productoService.obtenerPoliticas(id)
@@ -117,17 +118,15 @@ public class ProductoController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-
-    //#27 comparit producto en redes sociales
-
+    // #27 compartir producto en redes sociales
     @GetMapping("/{id}/compartir")
     public ResponseEntity<Map<String, String>> compartir(@PathVariable Long id) {
         return productoService.obtenerDatosCompartir(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
-    //#28 puntuar producto
 
+    // #28 puntuar producto
     @PostMapping("/{id}/puntuar")
     public ResponseEntity<?> puntuar(
             @PathVariable Long id,
@@ -146,4 +145,15 @@ public class ProductoController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    // #38 importar juego desde RAWG
+    @PostMapping("/importarRawg")
+    public ResponseEntity<Producto> importarRawg(@RequestBody Producto producto) {
+        Producto nuevo = productoService.importarDesdeRawg(
+                producto.getRawgId(),
+                producto.getPrecio(),
+                producto.getStock(),
+                producto.getPlataforma()
+        );
+        return ResponseEntity.status(HttpStatus.CREATED).body(nuevo);
+    }
 }
