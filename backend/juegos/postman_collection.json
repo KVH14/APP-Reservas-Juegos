@@ -1,0 +1,89 @@
+{
+  "info": {
+    "name": "APP-Reservas-Juegos - Create",
+    "_postman_id": "app-reservas-juegos-create",
+    "description": "Colección con requests para crear usuario, producto y favorito",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Create User (registro)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"email\":\"user@example.com\",\"password\":\"pwd123\",\"nombre\":\"Juan\"}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/auth/registro",
+          "host": ["{{baseUrl}}"],
+          "path": ["api","auth","registro"]
+        }
+      }
+    },
+    {
+      "name": "Create Product (producto)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"titulo\":\"Zelda: Breath\",\"plataforma\":\"Switch\",\"genero\":\"Aventura\",\"precio\":59.99,\"stock\":5,\"estado\":\"nuevo\",\"emoji\":\"🎮\",\"politicas\":\"No reembolso\",\"imagenUrl\":\"http://example.com/zelda.jpg\"}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/productos",
+          "host": ["{{baseUrl}}"],
+          "path": ["api","productos"]
+        }
+      }
+    },
+    {
+      "name": "List Users",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/usuarios",
+          "host": ["{{baseUrl}}"],
+          "path": ["usuarios"]
+        }
+      }
+    },
+    {
+      "name": "List Products",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/api/productos",
+          "host": ["{{baseUrl}}"],
+          "path": ["api","productos"]
+        }
+      }
+    },
+    {
+      "name": "Create Favorite",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"usuarioId\":1,\"productoId\":1}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/favoritos/crear",
+          "host": ["{{baseUrl}}"],
+          "path": ["favoritos","crear"]
+        }
+      }
+    }
+  ],
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8080" }
+  ]
+}

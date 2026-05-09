@@ -26,18 +26,16 @@ public class Producto {
     private double rating;
     private String emoji;
 
-    // 26.Ver bloque de políticas del producto
+    // Identificador externo RAWG
+    private Long rawgId;
+
     @Column(columnDefinition = "TEXT")
     private String politicas;
 
-    // 27.Compartir: URL de imagen para usar en redes sociales
     private String imagenUrl;
 
-    // Acumuladores para calcular rating promedio (#28)
     private int totalVotos;
     private double sumaRatings;
-
-
 
     @JsonIgnore
     @OneToMany(mappedBy = "producto", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -46,9 +44,9 @@ public class Producto {
     @JsonIgnore
     @ManyToMany
     @JoinTable(
-        name = "producto_categoria",
-        joinColumns = @JoinColumn(name = "producto_id"),
-        inverseJoinColumns = @JoinColumn(name = "categoria_id")
+            name = "producto_categoria",
+            joinColumns = @JoinColumn(name = "producto_id"),
+            inverseJoinColumns = @JoinColumn(name = "categoria_id")
     )
     private List<Categoria> categorias = new ArrayList<>();
 
@@ -66,6 +64,7 @@ public class Producto {
         this.emoji = emoji;
     }
 
+    // --- Getters y Setters ---
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
@@ -92,6 +91,9 @@ public class Producto {
 
     public String getEmoji() { return emoji; }
     public void setEmoji(String emoji) { this.emoji = emoji; }
+
+    public Long getRawgId() { return rawgId; }
+    public void setRawgId(Long rawgId) { this.rawgId = rawgId; }
 
     public List<Caracteristica> getCaracteristicas() { return caracteristicas; }
     public void setCaracteristicas(List<Caracteristica> caracteristicas) { this.caracteristicas = caracteristicas; }
