@@ -29,6 +29,7 @@ const ProductoAPI = {
   crear:    (data)      => apiFetch("/productos",      { method: "POST",   body: JSON.stringify(data) }),
   actualizar:(id, data) => apiFetch(`/productos/${id}`,{ method: "PUT",    body: JSON.stringify(data) }),
   eliminar: (id)        => apiFetch(`/productos/${id}`,{ method: "DELETE" }),
+  importar:  (data)      => apiFetch("/productos/importar",  { method: "POST",   body: JSON.stringify(data) }),
 };
 
 // ── Categorías ────────────────────────────────────────────────
