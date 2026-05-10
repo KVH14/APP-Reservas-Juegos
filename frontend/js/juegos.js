@@ -15,7 +15,8 @@ const bgPorPlataforma = {
 
 async function cargarJuegosAPI() {
   try {
-    const data = await ProductoAPI.listar();
+    const respuesta = await ProductoAPI.listar();
+    const data = Array.isArray(respuesta) ? respuesta : respuesta?.contenido || [];
 
     juegos.length = 0; // limpiar antes de llenar
 

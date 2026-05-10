@@ -3,7 +3,8 @@
 //  Base: http://localhost:8080/api
 // ════════════════════════════════════════════════════════════
 
-const API_BASE = "http://localhost:8080/api";
+const API_ROOT = "http://localhost:8080";
+const API_BASE = `${API_ROOT}/api`;
 
 // ── Función base ─────────────────────────────────────────────
 async function apiFetch(path, options = {}) {
@@ -19,6 +20,20 @@ async function apiFetch(path, options = {}) {
   return res.json();
 }
 
+async function rootFetch(path, options = {}) {
+  const res = await fetch(API_ROOT + path, {
+    headers: { "Content-Type": "application/json" },
+    ...options,
+  });
+  if (res.status === 204) return null;
+  if (!res.ok) {
+    const msg = await res.text().catch(() => res.statusText);
+    throw new Error(msg || `Error ${res.status}`);
+  }
+  const type = res.headers.get("content-type") || "";
+  return type.includes("application/json") ? res.json() : res.text();
+}
+
 // ── Productos ─────────────────────────────────────────────────
 // Campos del backend: id, titulo, plataforma, genero, precio,
 //                     stock, estado, rating, emoji, politicas,
@@ -30,6 +45,11 @@ const ProductoAPI = {
   actualizar:(id, data) => apiFetch(`/productos/${id}`,{ method: "PUT",    body: JSON.stringify(data) }),
   eliminar: (id)        => apiFetch(`/productos/${id}`,{ method: "DELETE" }),
   importar:  (data)      => apiFetch("/productos/importarRawg",  { method: "POST",   body: JSON.stringify(data) }),
+  caracteristicas: (id) => apiFetch(`/productos/${id}/caracteristicas`),
+  politicas: (id)       => apiFetch(`/productos/${id}/politicas`),
+  compartir: (id)       => apiFetch(`/productos/${id}/compartir`),
+  puntuar: (id, puntuacion) =>
+    apiFetch(`/productos/${id}/puntuar`, { method: "POST", body: JSON.stringify({ puntuacion }) }),
 };
 
 // ── Categorías ────────────────────────────────────────────────
@@ -44,6 +64,17 @@ const CategoriaAPI = {
 
 // ── Características ───────────────────────────────────────────
 // Campos del backend: id, clave, valor, productoId
+const ReservaAPI = {
+  listar: () => apiFetch("/reservas"),
+  obtener: (id) => apiFetch(`/reservas/${id}`),
+  porEmail: (email) => apiFetch(`/reservas/email/${encodeURIComponent(email)}`),
+  porProducto: (productoId) => apiFetch(`/reservas/producto/${productoId}`),
+  crear: (data) => apiFetch("/reservas", { method: "POST", body: JSON.stringify(data) }),
+  confirmar: (id) => apiFetch(`/reservas/${id}/confirmar`, { method: "PATCH" }),
+  cancelar: (id) => apiFetch(`/reservas/${id}/cancelar`, { method: "PATCH" }),
+  eliminar: (id) => apiFetch(`/reservas/${id}`, { method: "DELETE" }),
+};
+
 const CaracteristicaAPI = {
   listar:    ()          => apiFetch("/caracteristicas"),
   obtener:   (id)        => apiFetch(`/caracteristicas/${id}`),
@@ -63,4 +94,20 @@ const AuthAPI = {
 
   logout: () =>
     apiFetch("/auth/logout", { method: "POST" }),
+};
+
+const FavoritoAPI = {
+  listar: () => rootFetch("/favoritos"),
+  crear: (data) => rootFetch("/favoritos/crear", { method: "POST", body: JSON.stringify(data) }),
+};
+
+const DisponibilidadAPI = {
+  verificar: (id) => rootFetch(`/disponibilidad/${id}`),
+  cambiar: (id, disponible) =>
+    rootFetch(`/disponibilidad/${id}?disponible=${Boolean(disponible)}`, { method: "PUT" }),
+};
+
+const UsuarioAPI = {
+  listar: () => rootFetch("/usuarios"),
+  obtener: (id) => rootFetch(`/usuarios/${id}`),
 };

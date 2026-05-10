@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/disponibilidad")
+@CrossOrigin(origins = "*")
 public class DisponibilidadController {
     private final DisponibilidadService disponibilidadService;
 

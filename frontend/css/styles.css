@@ -419,6 +419,20 @@ _____________________________________________________
   filter: drop-shadow(0 4px 20px rgba(100,80,220,0.4));
 }
 
+.hero-featured-cover {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  position: relative;
+  z-index: 1;
+}
+
+.hero-featured-emoji {
+  font-size: 4rem;
+  position: relative;
+  z-index: 1;
+}
+
 .gc-body {
   padding: 14px 16px 16px;
 }
@@ -773,13 +787,22 @@ _____________________________________________________
 .game-thumbnail {
   width: 100%;
   height: 69%;
-  aspect-ratio: 4/3;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 3.5rem;
   position: relative;
   overflow: hidden;
+}
+
+.catalog-card-link { height: 58%; }
+.catalog-card-link .game-thumbnail { height: 100%; }
+
+.game-cover {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
 }
 
 .game-thumb-purple { background: linear-gradient(135deg, #1a1040, #0d0820); }
@@ -1570,6 +1593,20 @@ _____________________________________________________
 .detail-price-label { font-size: 0.68rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 4px; }
 .detail-price-amount { font-family: "Michroma", sans-serif; font-size: 2rem; font-weight: 900; color: var(--red); line-height: 1; }
 .detail-price-amount span { font-size: 0.85rem; color: var(--muted2); font-family: "Unica One", sans-serif; }
+.detail-cover {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  border-radius: inherit;
+}
+.gallery-main #galleryEmoji {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
 /* Selector de días */
 .days-label {
@@ -2034,6 +2071,13 @@ _____________________________________________________
 .status-badge.agotado::before { background: var(--red); }
 .status-badge.reservado { background: rgba(77,217,255,0.1); color: #4dd9ff; border: 1px solid rgba(77,217,255,0.2); }
 .status-badge.reservado::before { background: #4dd9ff; }
+
+.catalog-status-badge {
+  position: absolute;
+  left: 10px;
+  bottom: 10px;
+  z-index: 2;
+}
 
 .platform-tbl {
   background: rgba(124,92,252,0.1);
