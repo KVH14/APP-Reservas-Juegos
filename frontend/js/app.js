@@ -990,7 +990,7 @@ if (document.getElementById("tableBody")) {
     try {
       showToast("info", "🔍", "Buscando en RAWG...");
       const results = await fetch(
-        `http://localhost:8080/api/rawg/buscar?q=${encodeURIComponent(query)}`,
+        `${API_BASE}/rawg/buscar?q=${encodeURIComponent(query)}`,
       ).then((r) => r.json());
 
       if (!results || results.length === 0) {
