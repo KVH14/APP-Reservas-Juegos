@@ -7,6 +7,7 @@ import com.reservas.juegos.repository.ReservaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.reservas.juegos.factory.ReservaFactory;
+import com.reservas.juegos.service.EmailService;
 
 import java.util.List;
 import java.util.Optional;
@@ -25,6 +26,9 @@ public class ReservaService {
 
     @Autowired
     private ProductoRepository productoRepository;
+
+    @Autowired
+    private EmailService emailService;
 
     public List<Reserva> listarTodas() {
         return reservaRepository.findAll();
@@ -68,7 +72,9 @@ public class ReservaService {
             reserva = normal.crear(dto, producto);
         }
 
-        return Optional.of(reservaRepository.save(reserva));
+        Reserva guardada = reservaRepository.save(reserva);
+        emailService.enviarConfirmacionReserva(guardada);
+        return Optional.of(guardada);
     }
 
     // Cancelar reserva (devuelve stock)
