@@ -3,7 +3,7 @@
 //  Base: http://localhost:8080/api
 // ════════════════════════════════════════════════════════════
 
-const API_ROOT = "http://localhost:8080";
+const API_ROOT = window.PLAYRES_API_URL || "https://app-reservas-juegos-production.up.railway.app";
 const API_BASE = `${API_ROOT}/api`;
 
 // ── Función base ─────────────────────────────────────────────
