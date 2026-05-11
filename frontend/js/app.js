@@ -1109,8 +1109,8 @@ if (document.getElementById("tableBody")) {
             <td><span class="status-badge ${String(r.estado || "").toLowerCase()}">${r.estado || ""}</span></td>
             <td>
               <div class="action-btns">
-                <button class="btn-edit" onclick="confirmarReservaAdmin(${r.id})">Confirmar</button>
-                <button class="btn-delete" onclick="cancelarReservaAdmin(${r.id})">Cancelar</button>
+                ${r.estado === "PENDIENTE" ? `<button class="btn-edit" onclick="confirmarReservaAdmin(${r.id})">Confirmar</button>` : ""}
+                ${r.estado !== "CANCELADA" ? `<button class="btn-delete" onclick="cancelarReservaAdmin(${r.id})">Cancelar</button>` : ""}
               </div>
             </td>
           </tr>
@@ -1121,7 +1121,7 @@ if (document.getElementById("tableBody")) {
 
   async function renderUsuariosAdmin(link) {
     activarLinkAdmin(link);
-    prepararVistaAdmin("Usuarios", ["ID", "Nombre", "Email", "Rol"]);
+    prepararVistaAdmin("Usuarios", ["ID", "Nombre", "Email", "Rol", "Acciones"]);
 
     const usuarios = await UsuarioAPI.listar();
     document.getElementById("tableBody").innerHTML = (Array.isArray(usuarios) ? usuarios : [])
@@ -1131,12 +1131,25 @@ if (document.getElementById("tableBody")) {
             <td>${u.id}</td>
             <td>${u.nombre || ""}</td>
             <td>${u.email || ""}</td>
-            <td>${u.rol || ""}</td>
+            <td><span class="status-badge ${String(u.rol || "").toLowerCase()}">${u.rol || ""}</span></td>
+            <td>
+              <div class="action-btns">
+                ${u.rol === "USUARIO"
+                  ? `<button class="btn-edit" onclick="cambiarRolAdmin(${u.id}, 'ADMIN')">Hacer Admin</button>`
+                  : `<button class="btn-delete" onclick="cambiarRolAdmin(${u.id}, 'USUARIO')">Quitar Admin</button>`
+                }
+              </div>
+            </td>
           </tr>
         `,
       )
       .join("");
   }
+
+  window.cambiarRolAdmin = async function (id, rol) {
+    await UsuarioAPI.cambiarRol(id, rol);
+    await renderUsuariosAdmin(document.querySelector(".sidebar-nav a.active"));
+  };
 
   window.confirmarReservaAdmin = async function (id) {
     await ReservaAPI.confirmar(id);
@@ -1278,6 +1291,8 @@ function actualizarInterfaz() {
   const nombreTxt = document.getElementById("userNameDisplay");
   const avatarCirculo = document.getElementById("userAvatarInitials");
 
+  const btnAdmin = document.getElementById("btnPanelAdmin");
+
   if (sesion) {
     if (botonesAuth) botonesAuth.classList.add("d-none");
     if (!botonesAuth) {
@@ -1295,6 +1310,11 @@ function actualizarInterfaz() {
         (partes[0]?.charAt(0) ?? "") + (partes[1]?.charAt(0) ?? "");
       avatarCirculo.textContent = iniciales.toUpperCase();
     }
+
+    if (btnAdmin) {
+      if (sesion.rol === "ADMIN") btnAdmin.classList.remove("d-none");
+      else btnAdmin.classList.add("d-none");
+    }
   } else {
     if (botonesAuth) botonesAuth.classList.remove("d-none");
     if (!botonesAuth) {
@@ -1303,6 +1323,7 @@ function actualizarInterfaz() {
         .forEach((btn) => btn.classList.remove("d-none"));
     }
     if (perfilUsuario) perfilUsuario.classList.add("d-none");
+    if (btnAdmin) btnAdmin.classList.add("d-none");
   }
 }
 

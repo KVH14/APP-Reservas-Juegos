@@ -76,38 +76,42 @@
               id="navUserProfile"
               class="d-none d-flex align-items-center gap-3"
             >
-              <span
-                id="userNameDisplay"
-                class="fw-bold"
-                style="color: aliceblue; font-size: 0.9rem"
-              ></span>
-
-              <div
-                id="userAvatarInitials"
-                class="rounded-circle d-flex justify-content-center align-items-center fw-bold"
-                style="
-                  width: 35px;
-                  height: 35px;
-                  font-size: 0.8rem;
-                  background-color: var(--red);
-                  color: white;
-                  cursor: pointer;
-                "
-                title="Cerrar sesión"
-                onclick="cerrarSesion()"
-              ></div>
-
-              <button
-                class="btn btn-outline-light btn-sm ms-2"
-                style="
-                  font-size: 1rem;
-                  padding: 3px 11px;
-                  border-color: rgba(255, 255, 255, 0.852);
-                "
-                onclick="cerrarSesion()"
-              >
-                SALIR
-              </button>
+              <div class="dropdown">
+                <div
+                  class="d-flex align-items-center gap-2"
+                  data-bs-toggle="dropdown"
+                  style="cursor: pointer;"
+                >
+                  <span
+                    id="userNameDisplay"
+                    class="fw-bold"
+                    style="color: aliceblue; font-size: 0.9rem"
+                  ></span>
+                  <div
+                    id="userAvatarInitials"
+                    class="rounded-circle d-flex justify-content-center align-items-center fw-bold"
+                    style="
+                      width: 35px;
+                      height: 35px;
+                      font-size: 0.8rem;
+                      background-color: var(--red);
+                      color: white;
+                    "
+                  ></div>
+                </div>
+                <ul class="dropdown-menu dropdown-menu-end" style="background-color: #1a1a2e; border: 1px solid rgba(255,255,255,0.1);">
+                  <li>
+                    <a id="btnPanelAdmin" href="admin.html" class="dropdown-item d-none" style="color: var(--red); font-weight: 600;">
+                      Panel Admin
+                    </a>
+                  </li>
+                  <li>
+                    <button class="dropdown-item" style="color: white;" onclick="cerrarSesion()">
+                      Salir
+                    </button>
+                  </li>
+                </ul>
+              </div>
             </div>
 
             <a href="#" class="btn btn-reservar btn-sm">Reservar ahora →</a>
@@ -455,15 +459,6 @@
           >
         </div>
         <!-- BOTÓN AGREGAR CATEGORÍA -->
-        <div style="text-align: center; margin-top: 20px">
-          <button
-            class="btn-add-category"
-            data-bs-toggle="modal"
-            data-bs-target="#addCategoryModal"
-          >
-            Agregar categoría
-          </button>
-        </div>
       </div>
     </section>
 
@@ -935,7 +930,6 @@
           <div class="col-lg-2 col-md-6">
             <div class="footer-category-title">Empresa</div>
             <ul class="footer-links">
-              <li><a href="admin.html"> Panel Admin</a></li>
               <li><a href="#">Acerca de</a></li>
               <li><a href="#">Blog</a></li>
               <li><a href="#">Prensa</a></li>

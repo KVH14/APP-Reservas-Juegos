@@ -110,4 +110,5 @@ const DisponibilidadAPI = {
 const UsuarioAPI = {
   listar: () => rootFetch("/usuarios"),
   obtener: (id) => rootFetch(`/usuarios/${id}`),
+  cambiarRol: (id, rol) => rootFetch(`/usuarios/${id}/rol?rol=${rol}`, { method: "PATCH" }),
 };
