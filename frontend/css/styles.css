@@ -2282,7 +2282,6 @@ _____________________________________________________
 @media (max-width: 767px) {
   .admin-sidebar   { display: none; }
   .admin-main      { margin-left: 0; }
-  .gallery-thumbs  { grid-template-columns: repeat(2, 1fr); }
   .related-grid    { grid-template-columns: 1fr; }
   .detail-meta-row { grid-template-columns: 1fr; }
   .detail-meta-item { border-right: none; border-bottom: 1px solid var(--border); }

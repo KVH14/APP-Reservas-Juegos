@@ -59,6 +59,16 @@ function claveGenero(valor) {
   return alias[texto] || texto;
 }
 
+function obtenerImagenProducto(producto) {
+  return (
+    producto?.imagenUrl ||
+    producto?.background_image ||
+    producto?.backgroundImage ||
+    producto?.imagen ||
+    ""
+  );
+}
+
 function productoCard(p, extraTag = "") {
   const agotado = Number(p.stock || 0) === 0;
   const estado = agotado ? "agotado" : "disponible";
@@ -73,8 +83,8 @@ function productoCard(p, extraTag = "") {
           </div>
           <div class="status-badge ${estado} catalog-status-badge">${agotado ? "Agotado" : "Disponible"}</div>
           ${
-            p.imagenUrl
-              ? `<img class="game-cover" src="${p.imagenUrl}" alt="${p.titulo}" />`
+            obtenerImagenProducto(p)
+              ? `<img class="game-cover" src="${obtenerImagenProducto(p)}" alt="${p.titulo}" />`
               : `<span style="font-size:3rem">${p.emoji || "🎮"}</span>`
           }
         </div>
@@ -163,8 +173,8 @@ if (document.getElementById("featuredGamesGrid")) {
 
     const imagen = document.querySelector(".game-card-main .gc-img");
     if (imagen) {
-      imagen.innerHTML = destacado.imagenUrl
-        ? `<img class="hero-featured-cover" src="${escapeHtmlHome(destacado.imagenUrl)}" alt="${escapeHtmlHome(destacado.titulo)}" />`
+      imagen.innerHTML = obtenerImagenProducto(destacado)
+        ? `<img class="hero-featured-cover" src="${escapeHtmlHome(obtenerImagenProducto(destacado))}" alt="${escapeHtmlHome(destacado.titulo)}" />`
         : `<span class="hero-featured-emoji">${escapeHtmlHome(destacado.emoji || "🎮")}</span>`;
     }
 
@@ -377,8 +387,8 @@ if (document.getElementById("gamesGrid")) {
                     </div>
                     <div class="status-badge ${g.stock === 0 ? "agotado" : "disponible"} catalog-status-badge">${g.stock === 0 ? "Agotado" : "Disponible"}</div>
                     ${
-                      g.imagenUrl
-                        ? `<img class="game-cover" src="${g.imagenUrl}" alt="${g.titulo}" />`
+                      obtenerImagenProducto(g)
+                        ? `<img class="game-cover" src="${obtenerImagenProducto(g)}" alt="${g.titulo}" />`
                         : `<span style="font-size:3rem">${g.emoji}</span>`
                     }
                   </div>
@@ -441,16 +451,6 @@ if (document.getElementById("galleryMain")) {
   let selectedDetailDays = 1;
 
   // Cambiar imagen galería
-  window.changeGallery = function (el, emoji, c1, c2) {
-    document
-      .querySelectorAll(".gallery-thumb")
-      .forEach((t) => t.classList.remove("active"));
-    el.classList.add("active");
-    document.getElementById("galleryEmoji").textContent = emoji;
-    document.getElementById("galleryMain").style.background =
-      `linear-gradient(135deg, ${c1}, ${c2})`;
-  };
-
   // Selector de días y cálculo de total
   let detailPrice = 9900;
   window.selectDays = function (el, days) {
@@ -481,6 +481,7 @@ if (document.getElementById("galleryMain")) {
   }
 
   function renderDetail(producto) {
+    producto.imagenUrl = obtenerImagenProducto(producto);
     currentDetailProduct = producto;
     detailPrice = Number(producto.precio || 0);
     const agotado = Number(producto.stock || 0) === 0;
@@ -1279,6 +1280,11 @@ function actualizarInterfaz() {
 
   if (sesion) {
     if (botonesAuth) botonesAuth.classList.add("d-none");
+    if (!botonesAuth) {
+      document
+        .querySelectorAll(".btn-login")
+        .forEach((btn) => btn.classList.add("d-none"));
+    }
     if (perfilUsuario) perfilUsuario.classList.remove("d-none");
 
     if (nombreTxt) nombreTxt.textContent = sesion.nombre;
@@ -1291,6 +1297,11 @@ function actualizarInterfaz() {
     }
   } else {
     if (botonesAuth) botonesAuth.classList.remove("d-none");
+    if (!botonesAuth) {
+      document
+        .querySelectorAll(".btn-login")
+        .forEach((btn) => btn.classList.remove("d-none"));
+    }
     if (perfilUsuario) perfilUsuario.classList.add("d-none");
   }
 }
