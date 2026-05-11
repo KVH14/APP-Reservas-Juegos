@@ -13,7 +13,6 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="css/styles.css" />
-    <link rel="stylesheet" href="js/app.js" />
   </head>
   <body>
     <!-- NAVBAR -->
@@ -37,81 +36,36 @@
         </button>
 
         <div class="collapse navbar-collapse" id="navbarNav">
-          <ul
-            class="navbar-nav ms-auto mb-2 mb-lg-0 gap-lg-2 align-items-center"
-          >
-            <a href="catalogo.html" class="btn-ver">VER TODOS →</a>
-            <li class="nav-item">
-              <a class="nav-link" href="#categorias">Categorías</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#catalogo">Novedades</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#planes">Planes</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#comunidad">Comunidad</a>
-            </li>
+          <ul class="navbar-nav mx-auto mb-2 mb-lg-0 gap-lg-3 align-items-center">
+            <li class="nav-item"><a class="nav-link" href="catalogo.html">Explorar</a></li>
+            <li class="nav-item"><a class="nav-link" href="#categorias">Categorías</a></li>
+            <li class="nav-item"><a class="nav-link" href="#catalogo">Novedades</a></li>
+            <li class="nav-item"><a class="nav-link" href="#planes">Planes</a></li>
+            <li class="nav-item"><a class="nav-link" href="#comunidad">Comunidad</a></li>
           </ul>
 
-          <div class="d-flex align-items-center gap-2 ms-lg-3 mt-3 mt-lg-0">
+          <div class="d-flex align-items-center gap-3 mt-3 mt-lg-0">
             <div id="navAuthButtons" class="d-flex gap-2">
-              <a
-                href="#"
-                class="btn btn-login btn-sm"
-                data-bs-toggle="modal"
-                data-bs-target="#loginModal"
-                >Iniciar sesión</a
-              >
-              <a
-                href="#"
-                class="btn btn-login btn-sm"
-                data-bs-toggle="modal"
-                data-bs-target="#registerModal"
-                >Registrarse</a
-              >
+              <a href="#" class="btn btn-login btn-sm" data-bs-toggle="modal" data-bs-target="#loginModal">Iniciar sesión</a>
+              <a href="#" class="btn btn-reservar btn-sm" data-bs-toggle="modal" data-bs-target="#registerModal">Registrarse</a>
             </div>
 
-            <div
-              id="navUserProfile"
-              class="d-none d-flex align-items-center gap-3"
-            >
-              <span
-                id="userNameDisplay"
-                class="fw-bold"
-                style="color: aliceblue; font-size: 0.9rem"
-              ></span>
-
-              <div
-                id="userAvatarInitials"
-                class="rounded-circle d-flex justify-content-center align-items-center fw-bold"
-                style="
-                  width: 35px;
-                  height: 35px;
-                  font-size: 0.8rem;
-                  background-color: var(--red);
-                  color: white;
-                  cursor: pointer;
-                "
-                title="Cerrar sesión"
-                onclick="cerrarSesion()"
-              ></div>
-
-              <button
-                class="btn btn-outline-light btn-sm ms-2"
-                style="
-                  font-size: 1rem;
-                  padding: 3px 11px;
-                  border-color: rgba(255, 255, 255, 0.852);
-                "
-                onclick="cerrarSesion()"
-              >
-                SALIR
-              </button>
+            <div id="navUserProfile" class="d-none d-flex align-items-center">
+              <div class="dropdown">
+                <div class="d-flex align-items-center gap-2" data-bs-toggle="dropdown" style="cursor:pointer;">
+                  <span id="userNameDisplay" class="fw-bold" style="color:aliceblue;font-size:0.9rem;"></span>
+                  <div id="userAvatarInitials"
+                    class="rounded-circle d-flex justify-content-center align-items-center fw-bold"
+                    style="width:36px;height:36px;font-size:0.8rem;background-color:var(--red);color:white;">
+                  </div>
+                </div>
+                <ul class="dropdown-menu dropdown-menu-end" style="background-color:#1a1a2e;border:1px solid rgba(255,255,255,0.1);">
+                  <li><a id="btnPanelAdmin" href="admin.html" class="dropdown-item d-none" style="color:var(--red);font-weight:600;">Panel Admin</a></li>
+                  <li><a href="mis-reservas.html" class="dropdown-item" style="color:white;">Mis Reservas</a></li>
+                  <li><button class="dropdown-item" style="color:white;" onclick="cerrarSesion()">Salir</button></li>
+                </ul>
+              </div>
             </div>
-
-            <a href="#" class="btn btn-reservar btn-sm">Reservar ahora →</a>
           </div>
         </div>
       </div>
@@ -456,15 +410,6 @@
           >
         </div>
         <!-- BOTÓN AGREGAR CATEGORÍA -->
-        <div style="text-align: center; margin-top: 20px">
-          <button
-            class="btn-add-category"
-            data-bs-toggle="modal"
-            data-bs-target="#addCategoryModal"
-          >
-            Agregar categoría
-          </button>
-        </div>
       </div>
     </section>
 
@@ -478,7 +423,7 @@
           </div>
           <a href="catalogo.html" class="btn-ver">VER TODOS →</a>
         </div>
-        <div class="games-grid">
+        <div class="games-grid" id="featuredGamesGrid">
           <div class="game-card">
             <div class="game-thumbnail game-thumb-purple">
               <div class="game-tags">
@@ -936,7 +881,6 @@
           <div class="col-lg-2 col-md-6">
             <div class="footer-category-title">Empresa</div>
             <ul class="footer-links">
-              <li><a href="admin.html"> Panel Admin</a></li>
               <li><a href="#">Acerca de</a></li>
               <li><a href="#">Blog</a></li>
               <li><a href="#">Prensa</a></li>
@@ -979,6 +923,7 @@
             <div id="successMessage" class="alert alert-success d-none">
               Cuenta creada correctamente 🎉
             </div>
+            <div id="registerError" class="alert alert-danger d-none"></div>
             <form id="registerForm">
               <div class="mb-3">
                 <label class="form-label">Nombre</label>
@@ -1056,9 +1001,6 @@
         </div>
       </div>
     </div>
-    <script src="js/app.js"></script>
-    <script src="js/juegos.js"></script>
-
     <!-- =========================================
  MODAL: AGREGAR NUEVA CATEGORÍA
 ========================================= -->
@@ -1093,5 +1035,16 @@
         </div>
       </div>
     </div>
+    <script src="js/api.js"></script>
+    <script src="js/juegos.js"></script>
+    <script src="js/app.js"></script>
+
+  <!-- WhatsApp floating button -->
+  <a href="https://wa.me/573046446995" target="_blank" rel="noopener noreferrer" class="whatsapp-float" aria-label="Contáctanos por WhatsApp">
+    <span class="wa-tooltip">¿Tienes dudas? ¡Escríbenos!</span>
+    <span class="wa-bubble">
+      <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><path d="M16 0C7.164 0 0 7.163 0 16c0 2.822.737 5.469 2.027 7.77L0 32l8.437-2.01A15.93 15.93 0 0 0 16 32c8.836 0 16-7.163 16-16S24.836 0 16 0zm8.32 22.71c-.346.974-2.03 1.86-2.783 1.977-.71.11-1.604.156-2.587-.163-.597-.193-1.363-.45-2.347-.882-4.124-1.781-6.814-5.928-7.018-6.201-.205-.274-1.67-2.22-1.67-4.233 0-2.013 1.054-2.999 1.43-3.41.375-.41.82-.514 1.092-.514.274 0 .547.003.787.014.252.012.59-.096.923.704.346.82 1.175 2.832 1.278 3.038.102.205.17.444.034.718-.137.274-.205.444-.41.683-.205.24-.431.536-.615.72-.205.204-.418.425-.18.834.238.41 1.057 1.744 2.27 2.826 1.56 1.391 2.876 1.822 3.286 2.027.41.205.649.17.888-.103.24-.274 1.022-1.19 1.296-1.6.273-.41.546-.34.922-.205.376.137 2.387 1.126 2.797 1.33.41.205.683.308.786.479.103.17.103.984-.243 1.96z"/></svg>
+    </span>
+  </a>
   </body>
 </html>
