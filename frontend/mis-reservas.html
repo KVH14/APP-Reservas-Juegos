@@ -210,6 +210,10 @@
                 </div>
                 <div class="reserva-info-grid">
                   <div class="reserva-info-item">
+                    <label>Código</label>
+                    <span style="color:var(--red);font-weight:800;letter-spacing:0.1em;">${r.codigoReserva || "—"}</span>
+                  </div>
+                  <div class="reserva-info-item">
                     <label>Fecha reserva</label>
                     <span>${r.fechaReserva || "—"}</span>
                   </div>
@@ -220,10 +224,6 @@
                   <div class="reserva-info-item">
                     <label>Cliente</label>
                     <span>${r.nombreCliente || "—"}</span>
-                  </div>
-                  <div class="reserva-info-item">
-                    <label>ID Reserva</label>
-                    <span>#${r.id}</span>
                   </div>
                 </div>
               </div>`;

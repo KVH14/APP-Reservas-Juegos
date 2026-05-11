@@ -633,7 +633,7 @@ if (document.getElementById("galleryMain")) {
     if (!nombreCliente || !emailCliente) return;
 
     try {
-      await ReservaAPI.crear({
+      const reservaCreada = await ReservaAPI.crear({
         nombreCliente,
         emailCliente,
         productoId: currentDetailProduct.id,
@@ -642,9 +642,8 @@ if (document.getElementById("galleryMain")) {
         tipo: "NORMAL",
       });
 
-      const codigo = "PLR-" + Math.random().toString(36).substring(2, 7).toUpperCase();
       const codigoEl = document.getElementById("codigoReserva");
-      if (codigoEl) codigoEl.textContent = codigo;
+      if (codigoEl) codigoEl.textContent = reservaCreada?.codigoReserva || "—";
       const modal = new bootstrap.Modal(document.getElementById("modalReservaExitosa"));
       modal.show();
 

@@ -30,9 +30,12 @@ public class Reserva {
 
     private LocalDate fechaDevolucion;
 
-    // Estado: PENDIENTE, CONFIRMADA, CANCELADA
+    // Estado: CONFIRMADA, CANCELADA
     @Column(nullable = false)
     private String estado;
+
+    @Column(unique = true)
+    private String codigoReserva;
 
     public Reserva() {}
 
@@ -43,7 +46,8 @@ public class Reserva {
         this.producto = producto;
         this.fechaReserva = fechaReserva;
         this.fechaDevolucion = fechaDevolucion;
-        this.estado = "PENDIENTE";
+        this.estado = "CONFIRMADA";
+        this.codigoReserva = "PLR-" + java.util.UUID.randomUUID().toString().substring(0, 5).toUpperCase();
     }
 
     public Long getId() { return id; }
@@ -66,4 +70,7 @@ public class Reserva {
 
     public String getEstado() { return estado; }
     public void setEstado(String estado) { this.estado = estado; }
+
+    public String getCodigoReserva() { return codigoReserva; }
+    public void setCodigoReserva(String codigoReserva) { this.codigoReserva = codigoReserva; }
 }
